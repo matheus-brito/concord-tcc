@@ -1,0 +1,22 @@
+#main-screen{
+    display: flex;
+    flex-flow: row nowrap;
+    height: 100%;
+    align-items: center;
+    justify-content: space-around;
+}
+.text-display{
+    border: 1px solid black;
+    height:80%;
+    width: 45%;
+    border-radius: 1%;
+}
+
+.innerText{
+    margin: 2%;
+}
+
+.lineItem{    
+    height: 10%;
+    margin:0;
+}

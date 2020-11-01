@@ -1,0 +1,29 @@
+<form [formGroup] = "concordForm" (submit)="submit()">
+    <input type="file" id="upload-button" (change)="onUploadButtonChange($event)"/>
+    <mat-form-field class="form-field">
+        <mat-label>Token a Buscar</mat-label>
+        <input matInput formControlName="token"/>
+        <mat-error *ngIf="concordForm.controls.token.touched && concordForm.controls.token.invalid">
+            <span *ngIf="concordForm.controls.token.errors.required">Campo Obrigatório</span>
+        </mat-error>
+    </mat-form-field>
+    <mat-form-field class="form-field">
+        <mat-label>Tokens à Esquerda</mat-label>
+        <input matInput type="number" min="1" formControlName="tokensEsquerda"/>
+        <mat-error *ngIf="concordForm.controls.tokensEsquerda.touched && concordForm.controls.tokensEsquerda.invalid">
+            <span *ngIf="concordForm.controls.tokensEsquerda.errors.required">Campo Obrigatório</span>
+            <span *ngIf="concordForm.controls.tokensEsquerda.errors.min">Valor deve ser maior ou igual a {{ concordForm.controls.tokensEsquerda.errors.min.min }} </span>
+        </mat-error>
+    </mat-form-field>
+    <mat-form-field class="form-field">
+        <mat-label>Tokens à Direita</mat-label>
+        <input matInput type="number" min="1" formControlName="tokensDireita"/>
+        <mat-error *ngIf="concordForm.controls.tokensDireita.touched && concordForm.controls.tokensDireita.invalid">
+            <span *ngIf="concordForm.controls.tokensDireita.errors.required">Campo Obrigatório</span>
+            <span *ngIf="concordForm.controls.tokensDireita.errors.min">Valor deve ser maior ou igual a {{ concordForm.controls.tokensDireita.errors.min.min }} </span>
+        </mat-error>
+    </mat-form-field>
+    <mat-checkbox formControlName="ignorarTags">Ignorar Tags</mat-checkbox>
+    <mat-checkbox formControlName="ignorarTempo">Ignorar Marcações de Tempo</mat-checkbox>
+    <button mat-raised-button color="primary" type="submit">Executar</button>
+</form>
