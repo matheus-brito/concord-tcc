@@ -1,15 +1,19 @@
 #main-screen{
+    background-color: whitesmoke;
     display: flex;
     flex-flow: row nowrap;
     height: 100%;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
 }
 .text-display{
+    background-color: white;
     border: 1px solid black;
-    height:80%;
-    width: 45%;
+    height: 35rem;
+    width:32rem;
+    max-height:100%;
     border-radius: 1%;
+    margin-right:5%;
 }
 
 .innerText{

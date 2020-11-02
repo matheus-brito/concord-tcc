@@ -8,10 +8,9 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'concord-tcc';
   uploadedText;
-  resultLines = ['aaa <span>ABC</span> dfjsdkl','bbb'];
+  resultLines = [];
   lineCount = 0;
   tokens = [];
-  concordForm;
   
   onUploadButtonChange(event){
     if(event.target.files && event.target.files[0]){

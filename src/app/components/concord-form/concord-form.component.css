@@ -1,0 +1,70 @@
+div.form{
+    margin-left: 5%;
+    display: flex;
+    flex-flow: row nowrap;
+    height:31em;
+    width: 26em;
+}
+
+form{
+    margin: 0;
+    padding: 0;
+    width:100%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.input-file{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.number-selectors{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.number-selectors{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+}
+
+.number-selectors>.form-field{
+    width:40%;
+}
+
+button#submit-button.form-field{
+    align-self: center;
+    width: 50%;
+}
+
+.checkboxes{
+    margin: 0;
+    padding: 0;
+    height: 15%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+}
+
+.delete-icon{
+    cursor:pointer;
+}
+
+.delete-icon:active {
+    transform: scale(0.85);
+    transition: 5ms;
+  }
