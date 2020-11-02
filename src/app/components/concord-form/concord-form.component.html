@@ -2,7 +2,7 @@
 <form [formGroup] = "concordForm" (submit)="submit()">
     <div class="input-file">
         <button class="form-field" type="button" mat-raised-button (click)="fileInput.click()">Escolher Arquivo</button>
-        <input hidden (change)="onChangeUploadTextButton($event)" #fileInput type="file" id="file">
+        <input hidden (change)="onChangeUploadTextButton($event)" #fileInput type="file" id="file"/>
         <mat-form-field class="form-field">     
             <mat-label>Arquivo</mat-label>
             <input #fileNameField  id="fileName" matInput formControlName="arquivo" readonly/>
@@ -11,11 +11,11 @@
                 <span *ngIf="concordForm.controls.arquivo.errors.textExtensionValidator">Tipo de Arquivo Inválido.</span>
             </mat-error>
         </mat-form-field>
-        <mat-icon (click)="onClickDeleteIconTexto();" class="delete-icon" svgIcon="xIcon"></mat-icon>
+        <mat-icon (click)="onClickDeleteIcon(fileInput.id);" class="delete-icon" svgIcon="xIcon"></mat-icon>
     </div>
     <div class="input-file">
         <button class="form-field" type="button" mat-raised-button (click)="videoInput.click()">Escolher Vídeo</button>
-        <input hidden (change)="onChangeSelectVideoButton($event)" #videoInput type="file" id="file">
+        <input hidden (change)="onChangeSelectVideoButton($event)" #videoInput type="file" id="videoFile">
         <mat-form-field class="form-field">     
             <mat-label>Vídeo</mat-label>
             <input id="fileName" matInput formControlName="video" readonly/>
@@ -23,7 +23,7 @@
                 <span *ngIf="concordForm.controls.video.errors.required">Campo Obrigatório</span>
             </mat-error>
         </mat-form-field>
-        <mat-icon (click)="onClickDeleteIconVideo()" class="delete-icon" svgIcon="xIcon"></mat-icon>
+        <mat-icon (click)="onClickDeleteIcon(videoInput.id)" class="delete-icon" svgIcon="xIcon"></mat-icon>
     </div>
     <mat-form-field class="form-field">
         <mat-label>Token a Buscar</mat-label>

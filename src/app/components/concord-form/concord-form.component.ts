@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormGroup, FormBuilder, Validators, AbstractControl} from '@angular/forms';
 import {DomSanitizer} from '@angular/platform-browser';
 import {MatIconRegistry} from '@angular/material/icon';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-concord-form',
@@ -12,7 +13,9 @@ export class ConcordFormComponent implements OnInit {
   concordForm;
   uploadedText;
 
-  constructor(private formBuilder: FormBuilder, private iconRegistry: MatIconRegistry, 
+  constructor(private formBuilder: FormBuilder, 
+              private iconRegistry: MatIconRegistry, 
+              private router: Router,
               private sanitizer: DomSanitizer) {
     iconRegistry.addSvgIcon(
       'xIcon',
@@ -21,15 +24,15 @@ export class ConcordFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.concordForm = this.formBuilder.group({
-      arquivoConteudo:[this.uploadedText, null],
+      arquivoURL:[this.uploadedText, null],
       arquivo:[null, [Validators.required, this.textExtensionValidator]],
       video:[null, null],
-      videoPath:[null, null],
+      videoURL:[null, null],
       token:[null,[Validators.required]],
-      tokensEsquerda:[null,[Validators.required, Validators.min(1)]],
-      tokensDireita:[null,[Validators.required,Validators.min(1)]],
-      ignorarTags:[null, null],
-      ignorarTempo:[null, null]
+      tokensEsquerda:[1,[Validators.required, Validators.min(1)]],
+      tokensDireita:[1,[Validators.required,Validators.min(1)]],
+      ignorarTags:[false, null],
+      ignorarTempo:[false, null]
     });
   }
 
@@ -38,36 +41,42 @@ export class ConcordFormComponent implements OnInit {
       this.concordForm.markAllAsTouched();
       return;
     }
-    else
-      console.log("Submit");
+    else{
+      this.router.navigate(['lines'], {state:this.concordForm.value});
+    }
   }
 
   onChangeUploadTextButton(event){
     if(event.target.files && event.target.files[0]){
-      let reader = new FileReader();
-      reader.onload = () => {
-        this.uploadedText = reader.result;
-        this.concordForm.controls.arquivo.setValue(event.target.files[0].name);
-        this.concordForm.controls.arquivo.touched = true;
-      }
-      reader.readAsText(event.srcElement.files[0]);
+      this.concordForm.controls.arquivo.setValue(event.target.files[0].name);
+      this.concordForm.controls.arquivoURL.setValue(event.srcElement.files[0]);
     }
+    else{
+      this.concordForm.controls.arquivo.setValue(null);
+      this.concordForm.controls.arquivoURL.setValue(null);
+    }
+    this.concordForm.controls.arquivo.touched = true;
   }
 
   onChangeSelectVideoButton(event){
     if(event.target.files && event.target.files[0]){
-      this.concordForm.controls.video.setValue(event.target.files[0].name);
-      this.concordForm.controls.videoPath.setValue(event.target.files[0]);
+      let file = event.target.files[0];
+      this.concordForm.controls.video.setValue(file.name);
+      this.concordForm.controls.videoURL.setValue(URL.createObjectURL(file));
     }
+    else{
+      this.concordForm.controls.video.setValue(null);
+      this.concordForm.controls.videoURL.setValue(null);
+    }
+    this.concordForm.controls.video.touched = true;
   }
 
-  onClickDeleteIconTexto(){
-    this.concordForm.controls.arquivo.setValue(null);
-    this.concordForm.controls.arquivo.touched = true;
-  }
-
-  onClickDeleteIconVideo(){
-    this.concordForm.controls.video.setValue(null);
+  onClickDeleteIcon(id:string){
+    console.log(id);
+    let inputFile:HTMLInputElement = <HTMLInputElement>document.getElementById(id);
+    let event = new Event('change');
+    inputFile.value = null; 
+    inputFile.dispatchEvent(event);
   }
 
   textExtensionValidator(control:AbstractControl):{[key:string]:boolean}|null {

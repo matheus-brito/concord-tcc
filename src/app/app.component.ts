@@ -29,6 +29,7 @@ export class AppComponent {
   }
 
   concordanciador(tokenBuscado:string, esquerda:number, direita:number, caseSensitive:boolean){
+
     let isEqual;
     let textoEsquerda:string, textoDireita:string;
     textoEsquerda = textoDireita = '';

@@ -6,21 +6,3 @@
     align-items: center;
     justify-content: center;
 }
-.text-display{
-    background-color: white;
-    border: 1px solid black;
-    height: 35rem;
-    width:32rem;
-    max-height:100%;
-    border-radius: 1%;
-    margin-right:5%;
-}
-
-.innerText{
-    margin: 2%;
-}
-
-.lineItem{    
-    height: 10%;
-    margin:0;
-}

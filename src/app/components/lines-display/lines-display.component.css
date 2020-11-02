@@ -1,0 +1,17 @@
+.display-area{
+    padding: 3%;
+    background-color: white;
+    border:darkgray 1px solid;
+    height: 33rem;
+    width:32rem;
+    max-height:100%;
+    border-radius: 1%;
+    margin-right:5%;
+    overflow:auto;
+    resize: both;
+}
+
+.lineItem{    
+    height: 5%;
+    margin:0;
+}
