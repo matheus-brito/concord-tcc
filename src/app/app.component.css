@@ -1,8 +1,6 @@
 #main-screen{
-    background-color: whitesmoke;
     display: flex;
     flex-flow: row nowrap;
-    height: 100%;
     align-items: center;
     justify-content: center;
 }

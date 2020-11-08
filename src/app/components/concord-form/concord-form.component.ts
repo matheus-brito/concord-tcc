@@ -29,10 +29,11 @@ export class ConcordFormComponent implements OnInit {
       video:[null, null],
       videoURL:[null, null],
       token:[null,[Validators.required]],
-      tokensEsquerda:[1,[Validators.required, Validators.min(1)]],
-      tokensDireita:[1,[Validators.required,Validators.min(1)]],
+      tokensEsquerda:[10,[Validators.required, Validators.min(1)]],
+      tokensDireita:[10,[Validators.required,Validators.min(1)]],
+      caseSensitive: [false, null],
       ignorarTags:[false, null],
-      ignorarTempo:[false, null]
+      ignorarTempo:[true, null]
     });
   }
 

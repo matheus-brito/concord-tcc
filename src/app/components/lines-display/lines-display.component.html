@@ -1,4 +1,36 @@
-<div class="display-area">
+<!-- <div class="display-area">
     <pre class="lineItem" *ngFor="let line of lines" [innerHTML]="line">
     </pre>
+</div> -->
+
+<div class="mat-elevation-z8 display-area">
+    <table id="tabela-contexto" mat-table [dataSource]="linhasTabela">
+  
+      <!-- Contexto à Esquerda  -->
+      <ng-container matColumnDef="contexto_esquerda">
+        <th mat-header-cell *matHeaderCellDef> Contexto à Esquerda </th>
+        <td id="contexto-esquerda" mat-cell *matCellDef="let element"> {{element.contexto_esquerda}} </td>
+      </ng-container>
+  
+      <!-- Palavra-Chave -->
+      <ng-container matColumnDef="palavra_chave">  
+        <th mat-header-cell *matHeaderCellDef> Palavra-Chave </th>
+        <td mat-cell id="palavra-chave" *matCellDef="let element"> {{element.palavra_chave}} </td>
+      </ng-container>
+  
+      <!-- Contexto à Direita -->
+      <ng-container matColumnDef="contexto_direita">
+        <th mat-header-cell *matHeaderCellDef> Contexto à Direita </th>
+        <td mat-cell id="contexto-direita" *matCellDef="let element"> {{element.contexto_direita}} </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="colunasTabela"></tr>
+      <tr mat-row *matRowDef="let row; columns: colunasTabela;"></tr>
+    </table>
+
+    <mat-paginator id="paginator" [pageSize]=10 
+                                  [pageSizeOptions]="[5, 10, 20]" 
+                                  showFirstLastButtons></mat-paginator>
 </div>
+
+  

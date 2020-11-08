@@ -1,17 +1,35 @@
 .display-area{
-    padding: 3%;
-    background-color: white;
-    border:darkgray 1px solid;
-    height: 33rem;
-    width:32rem;
-    max-height:100%;
-    border-radius: 1%;
-    margin-right:5%;
+    margin: 5%;
+    height: fit-content;
+    width: max-content;  
     overflow:auto;
-    resize: both;
+    resize: horizontal;
 }
 
-.lineItem{    
-    height: 5%;
+table{
+    width:100%;
     margin:0;
+    padding:0;
+}
+.mat-row{
+    height:auto;
+}
+.mat-cell{
+    padding: 1% 1% 1% 1%;
+}
+
+#contexto-esquerda.mat-cell{
+    text-align: right;
+}
+
+#contexto-direita.mat-cell{
+    text-align: left;
+}
+
+#palavra-chave.mat-cell{
+    text-align: center;
+}
+
+.mat-header-cell{
+    text-align: center;
 }

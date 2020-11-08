@@ -12,6 +12,9 @@ import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+
 
 import { ConcordFormComponent } from '../app/components/concord-form/concord-form.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
@@ -34,7 +37,9 @@ import { LinesDisplayComponent } from './components/lines-display/lines-display.
     MatInputModule,
     ReactiveFormsModule,
     MatIconModule,
-    HttpClientModule
+    HttpClientModule,
+    MatTableModule,
+    MatPaginatorModule
   ],
   providers: [],
   bootstrap: [AppComponent]
