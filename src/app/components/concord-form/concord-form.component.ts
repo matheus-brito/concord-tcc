@@ -5,13 +5,14 @@ import {MatIconRegistry} from '@angular/material/icon';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-concord-form',
+  selector: 'app-concord-form', 
   templateUrl: './concord-form.component.html',
   styleUrls: ['./concord-form.component.css']
 })
 export class ConcordFormComponent implements OnInit {
   concordForm;
   uploadedText;
+  teste; teste2;
 
   constructor(private formBuilder: FormBuilder, 
               private iconRegistry: MatIconRegistry, 
@@ -27,7 +28,7 @@ export class ConcordFormComponent implements OnInit {
       arquivoURL:[this.uploadedText, null],
       arquivo:[null, [Validators.required, this.textExtensionValidator]],
       video:[null, null],
-      videoURL:[null, null],
+      videoData:[null, null],
       token:[null,[Validators.required]],
       tokensEsquerda:[10,[Validators.required, Validators.min(1)]],
       tokensDireita:[10,[Validators.required,Validators.min(1)]],
@@ -61,13 +62,13 @@ export class ConcordFormComponent implements OnInit {
 
   onChangeSelectVideoButton(event){
     if(event.target.files && event.target.files[0]){
-      let file = event.target.files[0];
+      let file = event.srcElement.files[0];
       this.concordForm.controls.video.setValue(file.name);
-      this.concordForm.controls.videoURL.setValue(URL.createObjectURL(file));
+      this.concordForm.controls.videoData.setValue({src:URL.createObjectURL(file), type: file.type});
     }
     else{
       this.concordForm.controls.video.setValue(null);
-      this.concordForm.controls.videoURL.setValue(null);
+      this.concordForm.controls.videoData.setValue(null);
     }
     this.concordForm.controls.video.touched = true;
   }

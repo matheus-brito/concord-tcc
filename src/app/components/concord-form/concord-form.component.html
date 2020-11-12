@@ -18,7 +18,7 @@
         <input hidden (change)="onChangeSelectVideoButton($event)" #videoInput type="file" id="videoFile">
         <mat-form-field class="form-field">     
             <mat-label>Vídeo</mat-label>
-            <input id="fileName" matInput formControlName="video" readonly/>
+            <input matInput formControlName="video" readonly/>
             <mat-error *ngIf="concordForm.controls.video.touched && concordForm.controls.video.invalid">
                 <span *ngIf="concordForm.controls.video.errors.required">Campo Obrigatório</span>
             </mat-error>

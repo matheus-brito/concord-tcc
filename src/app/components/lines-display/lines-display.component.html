@@ -15,7 +15,7 @@
       <!-- Palavra-Chave -->
       <ng-container matColumnDef="palavra_chave">  
         <th mat-header-cell *matHeaderCellDef> Palavra-Chave </th>
-        <td mat-cell id="palavra-chave" *matCellDef="let element"> {{element.palavra_chave}} </td>
+        <td mat-cell id="palavra-chave" (click)="onPalavraChaveClick(element.palavra_chave.time)" *matCellDef="let element">{{element.palavra_chave.keyword}}</td>
       </ng-container>
   
       <!-- Contexto à Direita -->
@@ -32,5 +32,4 @@
                                   [pageSizeOptions]="[5, 10, 20]" 
                                   showFirstLastButtons></mat-paginator>
 </div>
-
-  
+<app-video-display id="video-display" [videoSource]="formData.videoData" [time]="videoTime"></app-video-display>

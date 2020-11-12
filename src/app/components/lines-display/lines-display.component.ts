@@ -13,6 +13,7 @@ export class LinesDisplayComponent implements OnInit {
   @ViewChild(MatPaginator)
   paginator: MatPaginator;
   
+  videoTime=0;
   lines = []
   colunasTabela: string[] = ['contexto_esquerda', 'palavra_chave', 'contexto_direita'];
   linhasTabela;// = new MatTableDataSource<PeriodicElement>([{position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'}]);
@@ -28,12 +29,38 @@ export class LinesDisplayComponent implements OnInit {
     this.processarDadosFormulario();
   }
 
+  onPalavraChaveClick(tempoLegenda){
+    let tempoInicio = this.buscarTempoInicio(tempoLegenda);
+    if(tempoInicio != ''){
+      this.videoTime = this.converterParaSegundos(tempoInicio);
+    }
+  }
+
+  converterParaSegundos(tempo){
+    let tempoAux = tempo.replace(/,/, '\:').split(/\:/);
+    let segundos;
+    segundos = Number(tempoAux[0])*(60**2) + Number(tempoAux[1])*60 + 
+               Number(tempoAux[2]) + Math.round(Number(tempoAux[3]/1000));
+    console.log(Math.round(Number(tempoAux[3]/1000)))
+    return segundos;
+  }
+
+  buscarTempoInicio(tempoLegenda:string){
+    let regex = new RegExp(/(?<tempoInicio>\d{2}\:\d{2}\:\d{2},\d{3})\s*-->/);
+    let resultado;
+    resultado = tempoLegenda.match(regex)
+    if(resultado)
+      return resultado.groups.tempoInicio;
+    else
+      return '';
+  }
+
   processarDadosFormulario(){
     if(this.formData.arquivoURL){
       let reader = new FileReader();
       reader.onload = () => {
         this.fileText = reader.result;
-        let regexMarcacaoTempo = new RegExp(/([1-9])\d*\s+\d{2}\:\d{2}\:\d{2},\d{3} --> \d{2}\:\d{2}(\:\d{2},\d{3})/g);
+        let regexMarcacaoTempo = new RegExp(/([1-9])\d*\s+\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
         let regexTag = new RegExp(/^<[^\s]+>$/);
         let palavrasAux = this.isolarMarcacoesDeTempo(this.fileText, regexMarcacaoTempo);
         
@@ -53,7 +80,6 @@ export class LinesDisplayComponent implements OnInit {
                                           regexMarcacaoTempo, regexTag);
         this.linhasTabela = new MatTableDataSource<Contexto>(this.lines);
         this.linhasTabela.paginator = this.paginator;
-        console.log(this.palavras);
       }
       reader.readAsText(this.formData.arquivoURL);
     }
@@ -64,6 +90,8 @@ export class LinesDisplayComponent implements OnInit {
                   regexMarcacaoTempo, regexTag){
     let linhasConcord=[];
     
+    let indexBusca;
+    let tempoLegenda;
     let termoEncontrado;
     let contadorPalavras;
     let regexTeste;
@@ -85,12 +113,22 @@ export class LinesDisplayComponent implements OnInit {
         
         if(termoEncontrado != null){
           contadorPalavras = 0;
-          for(let i = indice-1; i >= 0 && contadorPalavras < esquerda; --i){
-            if(!regexMarcacaoTempo.test(listaPalavras[i]) &&
-              (!regexTag.test(listaPalavras[i]) || !igonorarTags)){
-              textoEsquerda = listaPalavras[i] + ' ' + textoEsquerda;
+          tempoLegenda = '';
+
+          for(indexBusca = indice-1; indexBusca >= 0 && contadorPalavras < esquerda; --indexBusca){
+            if(regexMarcacaoTempo.test(listaPalavras[indexBusca])){
+              tempoLegenda = listaPalavras[indexBusca];
+            }else if(!regexTag.test(listaPalavras[indexBusca]) || !igonorarTags){
+              textoEsquerda = listaPalavras[indexBusca] + ' ' + textoEsquerda;
               ++contadorPalavras;
             }
+          }
+
+          while(tempoLegenda == '' && indexBusca >= 0){
+            if(regexMarcacaoTempo.test(listaPalavras[indexBusca]))
+              tempoLegenda = listaPalavras[indexBusca];
+
+            --indexBusca;
           }
 
           contadorPalavras = 0;
@@ -101,7 +139,7 @@ export class LinesDisplayComponent implements OnInit {
               ++contadorPalavras;
             }
           }
-          linhasConcord.push({contexto_esquerda: textoEsquerda.trim(), palavra_chave: termoEncontrado, contexto_direita: textoDireita.trim()});
+          linhasConcord.push({contexto_esquerda: textoEsquerda.trim(), palavra_chave: {keyword:termoEncontrado, time:tempoLegenda}, contexto_direita: textoDireita.trim()});
           textoEsquerda = textoDireita = '';
         }
       }
@@ -176,6 +214,6 @@ export class LinesDisplayComponent implements OnInit {
 
 export interface Contexto {
   contexto_esquerda: string;
-  palavra_chave: string;
+  palavra_chave: {keyword:string, time:string};
   contexto_direita: string;
 }

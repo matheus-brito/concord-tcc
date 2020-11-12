@@ -19,13 +19,15 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { ConcordFormComponent } from '../app/components/concord-form/concord-form.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LinesDisplayComponent } from './components/lines-display/lines-display.component';
+import { VideoDisplayComponent } from './components/video-display/video-display.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ConcordFormComponent,
     NotFoundComponent,
-    LinesDisplayComponent
+    LinesDisplayComponent,
+    VideoDisplayComponent
   ],
   imports: [
     BrowserModule,

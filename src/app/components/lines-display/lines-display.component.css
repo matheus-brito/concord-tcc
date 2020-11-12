@@ -28,8 +28,14 @@ table{
 
 #palavra-chave.mat-cell{
     text-align: center;
+    cursor:pointer;
 }
 
 .mat-header-cell{
     text-align: center;
+}
+
+#palavra-chave.mat-cell:hover{
+    background-color: hsl(195, 53%, 80%);
+    transition-duration: 500ms;
 }
