@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
+import subsrt from 'subsrt';
 
 @Component({
   selector: 'app-lines-display',
@@ -14,6 +15,7 @@ export class LinesDisplayComponent implements OnInit {
   paginator: MatPaginator;
   
   videoTime=0;
+  subtitles;
   lines = []
   colunasTabela: string[] = ['contexto_esquerda', 'palavra_chave', 'contexto_direita'];
   linhasTabela;// = new MatTableDataSource<PeriodicElement>([{position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'}]);
@@ -60,6 +62,11 @@ export class LinesDisplayComponent implements OnInit {
       let reader = new FileReader();
       reader.onload = () => {
         this.fileText = reader.result;
+        //this.fileText = subsrt.convert(reader.result, {format: 'srt'});
+        let vttSub = subsrt.convert(this.fileText, {format: 'vtt'});
+        let newFile = new Blob([vttSub], {type:'vtt'});
+        this.subtitles = {src: URL.createObjectURL(newFile), mode: "showing"}
+        console.log(this.subtitles)
         let regexMarcacaoTempo = new RegExp(/([1-9])\d*\s+\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
         let regexTag = new RegExp(/^<[^\s]+>$/);
         let palavrasAux = this.isolarMarcacoesDeTempo(this.fileText, regexMarcacaoTempo);

@@ -13,6 +13,7 @@ export class VideoDisplayComponent implements OnDestroy {
 
   @Input() videoSource;
   @Input() time;
+  @Input() subtitle;
   player: videojs.Player;
   constructor(private elementRef: ElementRef) { }
 
@@ -27,6 +28,14 @@ export class VideoDisplayComponent implements OnDestroy {
       this.player.currentTime(this.time);
       this.player.play();
     }
+    if(changes.subtitle){
+      this.player.addRemoteTextTrack(this.subtitle, false);
+      console.log(this.player.remoteTextTracks().length())
+    }
+  }
+
+  removeAllTextTracks(){
+    //this.player.remoteTextTracks()
   }
 
   ngOnDestroy(): void {
