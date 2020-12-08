@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import {FormGroup, FormBuilder, Validators, AbstractControl} from '@angular/forms';
 import {DomSanitizer} from '@angular/platform-browser';
 import {MatIconRegistry} from '@angular/material/icon';
@@ -10,6 +10,10 @@ import { Router } from '@angular/router';
   styleUrls: ['./concord-form.component.css']
 })
 export class ConcordFormComponent implements OnInit {
+  
+  @Output() onValidSubmit: EventEmitter<any> = new EventEmitter();
+  @Output() onInvalidSubmit: EventEmitter<any> = new EventEmitter();
+
   concordForm;
   uploadedText;
   teste; teste2;
@@ -41,10 +45,11 @@ export class ConcordFormComponent implements OnInit {
   submit(){
     if(this.concordForm.invalid){
       this.concordForm.markAllAsTouched();
+      this.onInvalidSubmit.emit();
       return;
     }
     else{
-      this.router.navigate(['lines'], {state:this.concordForm.value});
+      this.onValidSubmit.emit();
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -8,31 +8,37 @@ import { MatPaginator } from '@angular/material/paginator';
   templateUrl: './lines-display.component.html',
   styleUrls: ['./lines-display.component.css']
 })
-export class LinesDisplayComponent implements OnInit {
+export class LinesDisplayComponent implements OnInit{
   
-  @ViewChild(MatPaginator)
-  paginator: MatPaginator;
-  
-  videoTime=0;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  @Output() onKeywordClick: EventEmitter<any> = new EventEmitter();
+
+  @Input() formData;
+  videoTime = 0;
   lines = []
   colunasTabela: string[] = ['contexto_esquerda', 'palavra_chave', 'contexto_direita'];
   linhasTabela;// = new MatTableDataSource<PeriodicElement>([{position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'}]);
-  formData;
   fileText;
-  palavras= [];
+  palavras = [];
 
-  constructor(private router: Router) { 
-    this.formData = this.router.getCurrentNavigation().extras.state;
+  constructor() {}
+
+  ngOnInit(){
+    this.processarDadosFormulario();
   }
 
-  ngOnInit(): void {
-    this.processarDadosFormulario();
+  ngOnChanges(changes){
+    if(changes.formData && !changes.formData.firstChange){
+      this.processarDadosFormulario();
+    }
   }
 
   onPalavraChaveClick(tempoLegenda){
     let tempoInicio = this.buscarTempoInicio(tempoLegenda);
+    console.log(tempoInicio)
     if(tempoInicio != ''){
-      this.videoTime = this.converterParaSegundos(tempoInicio);
+      this.onKeywordClick.emit(this.converterParaSegundos(tempoInicio));
     }
   }
 
@@ -40,8 +46,8 @@ export class LinesDisplayComponent implements OnInit {
     let tempoAux = tempo.replace(/,/, '\:').split(/\:/);
     let segundos;
     segundos = Number(tempoAux[0])*(60**2) + Number(tempoAux[1])*60 + 
-               Number(tempoAux[2]) + Math.round(Number(tempoAux[3]/1000));
-    console.log(Math.round(Number(tempoAux[3]/1000)))
+               Number(tempoAux[2]) + Number(tempoAux[3]/1000);
+    console.log(segundos)
     return segundos;
   }
 
@@ -62,19 +68,24 @@ export class LinesDisplayComponent implements OnInit {
         this.fileText = reader.result;
         let regexMarcacaoTempo = new RegExp(/([1-9])\d*\s+\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
         let regexTag = new RegExp(/^<[^\s]+>$/);
+        let regexSemConteudo = new RegExp(/^[\s]+$/);
         let palavrasAux = this.isolarMarcacoesDeTempo(this.fileText, regexMarcacaoTempo);
-        
+        this.palavras = [];
+        console.log(palavrasAux)
         palavrasAux.forEach((texto, indice)=>{
-          if(regexMarcacaoTempo.test(texto)){
-            this.palavras.push(texto);
+          //if(!regexSemConteudo.test(texto)){
+            if(regexMarcacaoTempo.test(texto)){
+              this.palavras.push(texto);
 
-            if(!this.formData.ignorarTempo)
+              if(!this.formData.ignorarTempo)
+                this.palavras.push(...this.separarPalavras(texto));
+            }
+            else{
               this.palavras.push(...this.separarPalavras(texto));
-          }
-          else
-            this.palavras.push(...this.separarPalavras(texto));
+            }
+          //}
         });
-
+        console.log(this.palavras)
         this.lines = this.concordanciador(this.palavras,this.separarPalavras(this.formData.token), this.formData.tokensEsquerda,
                                           this.formData.tokensDireita, this.formData.caseSensitive,  this.formData.ignorarTags, 
                                           regexMarcacaoTempo, regexTag);
@@ -117,7 +128,8 @@ export class LinesDisplayComponent implements OnInit {
 
           for(indexBusca = indice-1; indexBusca >= 0 && contadorPalavras < esquerda; --indexBusca){
             if(regexMarcacaoTempo.test(listaPalavras[indexBusca])){
-              tempoLegenda = listaPalavras[indexBusca];
+              if(tempoLegenda == '')
+                tempoLegenda = listaPalavras[indexBusca];
             }else if(!regexTag.test(listaPalavras[indexBusca]) || !igonorarTags){
               textoEsquerda = listaPalavras[indexBusca] + ' ' + textoEsquerda;
               ++contadorPalavras;
@@ -201,12 +213,13 @@ export class LinesDisplayComponent implements OnInit {
     
     texto = texto.trim();
     texto = texto.replace(/>([^\s]+)/g,replacer1);
-    texto = texto.replace(/([^\s]+)</g,replacer2); 
+    texto = texto.replace(/([^\s]+)</g,replacer2);
+
     return texto.split(/\s+/);
   }
 
   isolarMarcacoesDeTempo(texto:string, regex){
-    texto = texto.replace(regex, (match, g1, g2)=>match.replace(g1, '\u0F12 ' + g1).replace(g2, g2 + ' \u0F12'));
+    texto = texto.replace(regex, (match, g1, g2)=>match.replace(g1, '\u0F12' + g1).replace(g2, g2 + '\u0F12'));
     return texto.split(/\u0F12/);
   } 
 
