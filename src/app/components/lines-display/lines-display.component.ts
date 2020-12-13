@@ -100,7 +100,7 @@ export class LinesDisplayComponent implements OnInit{
       readerTesteISO.onload = ()=>{
         let isISO:boolean;
         let textoLido = readerTesteISO.result as string;
-        let regexISO = new RegExp(/[\u0000-\u00ff]/);
+        let regexISO = new RegExp(/�/);
         isISO = regexISO.test(textoLido);
 
         if(isISO){
