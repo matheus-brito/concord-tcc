@@ -64,16 +64,18 @@ export class LinesDisplayComponent implements OnInit{
   processarDadosFormulario(){
     if(this.formData.arquivoURL){
       let reader = new FileReader();
+      let readerTesteISO = new FileReader();
+      
       reader.onload = () => {
         this.fileText = reader.result;
-        let regexMarcacaoTempo = new RegExp(/([1-9])\d*\s+\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
+        let regexMarcacaoTempo = new RegExp(/([1-9])\d*\s+\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/);
+        let regexMarcacaoTempoGlobal = new RegExp(/([1-9])\d*\s+\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
         let regexTag = new RegExp(/^<[^\s]+>$/);
-        let regexSemConteudo = new RegExp(/^[\s]+$/);
-        let palavrasAux = this.isolarMarcacoesDeTempo(this.fileText, regexMarcacaoTempo);
+        let regexStringVazia = new RegExp(/^$/);
+        let palavrasAux = this.isolarMarcacoesDeTempo(this.fileText, regexMarcacaoTempoGlobal);
         this.palavras = [];
-        console.log(palavrasAux)
+        //console.log(palavrasAux)
         palavrasAux.forEach((texto, indice)=>{
-          //if(!regexSemConteudo.test(texto)){
             if(regexMarcacaoTempo.test(texto)){
               this.palavras.push(texto);
 
@@ -83,16 +85,31 @@ export class LinesDisplayComponent implements OnInit{
             else{
               this.palavras.push(...this.separarPalavras(texto));
             }
-          //}
         });
-        console.log(this.palavras)
+        this.palavras = this.palavras.filter((valor)=>!(regexStringVazia.test(valor)));
+        //console.log(this.palavras)
         this.lines = this.concordanciador(this.palavras,this.separarPalavras(this.formData.token), this.formData.tokensEsquerda,
                                           this.formData.tokensDireita, this.formData.caseSensitive,  this.formData.ignorarTags, 
                                           regexMarcacaoTempo, regexTag);
         this.linhasTabela = new MatTableDataSource<Contexto>(this.lines);
         this.linhasTabela.paginator = this.paginator;
       }
-      reader.readAsText(this.formData.arquivoURL);
+
+      readerTesteISO.onload = ()=>{
+        let isISO:boolean;
+        let textoLido = readerTesteISO.result as string;
+        let regexISO = new RegExp(/[\u0000-\u00ff]/);
+        isISO = regexISO.test(textoLido);
+
+        if(isISO){
+          reader.readAsText(this.formData.arquivoURL, "ISO-8859-1");
+        }
+        else{
+          reader.readAsText(this.formData.arquivoURL);
+        }
+      }
+      
+      readerTesteISO.readAsText(this.formData.arquivoURL);
     }
   }
 
