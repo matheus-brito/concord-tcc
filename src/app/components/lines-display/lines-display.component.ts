@@ -68,15 +68,17 @@ export class LinesDisplayComponent implements OnInit{
       
       reader.onload = () => {
         this.fileText = reader.result;
+        let regexMarcacaoTempoEtiquetado = new RegExp(/^(\d{2})\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})$/);
+        let regexMarcacaoTempoEtiquetadoGlobal = new RegExp(/(?<=<sub\d+>(?:\s*<[^\s]+)*>\s*)(\d{2})\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
         let regexMarcacaoTempo = new RegExp(/([1-9])\d*\s+\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/);
         let regexMarcacaoTempoGlobal = new RegExp(/([1-9])\d*\s+\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
-        let regexTag = new RegExp(/^<[^\s]+>$/);
+        let regexTag = new RegExp(/^<(?:[^\s<>]+\s*)+>$/);
         let regexStringVazia = new RegExp(/^$/);
-        let palavrasAux = this.isolarMarcacoesDeTempo(this.fileText, regexMarcacaoTempoGlobal);
+        let palavrasAux = this.isolarMarcacoesDeTempo(this.fileText, regexMarcacaoTempoGlobal,regexMarcacaoTempoEtiquetadoGlobal);
         this.palavras = [];
-        //console.log(palavrasAux)
+        console.log(palavrasAux)
         palavrasAux.forEach((texto, indice)=>{
-            if(regexMarcacaoTempo.test(texto)){
+            if(regexMarcacaoTempo.test(texto) || regexMarcacaoTempoEtiquetado.test(texto)){
               this.palavras.push(texto);
 
               if(!this.formData.ignorarTempo)
@@ -87,10 +89,10 @@ export class LinesDisplayComponent implements OnInit{
             }
         });
         this.palavras = this.palavras.filter((valor)=>!(regexStringVazia.test(valor)));
-        //console.log(this.palavras)
+        console.log(this.palavras)
         this.lines = this.concordanciador(this.palavras,this.separarPalavras(this.formData.token), this.formData.tokensEsquerda,
                                           this.formData.tokensDireita, this.formData.caseSensitive,  this.formData.ignorarTags, 
-                                          regexMarcacaoTempo, regexTag);
+                                          regexMarcacaoTempo, regexMarcacaoTempoEtiquetado, regexTag);
         this.linhasTabela = new MatTableDataSource<Contexto>(this.lines);
         this.linhasTabela.paginator = this.paginator;
       }
@@ -115,7 +117,7 @@ export class LinesDisplayComponent implements OnInit{
 
   concordanciador(listaPalavras,termoBuscado:string[], esquerda:number, 
                   direita:number, caseSensitive:boolean, igonorarTags:boolean,
-                  regexMarcacaoTempo, regexTag){
+                  regexMarcacaoTempo, regexMarcacaoTempoEtiquetado, regexTag){
     let linhasConcord=[];
     
     let indexBusca;
@@ -144,7 +146,7 @@ export class LinesDisplayComponent implements OnInit{
           tempoLegenda = '';
 
           for(indexBusca = indice-1; indexBusca >= 0 && contadorPalavras < esquerda; --indexBusca){
-            if(regexMarcacaoTempo.test(listaPalavras[indexBusca])){
+            if(regexMarcacaoTempo.test(listaPalavras[indexBusca]) || regexMarcacaoTempoEtiquetado.test(listaPalavras[indexBusca])){
               if(tempoLegenda == '')
                 tempoLegenda = listaPalavras[indexBusca];
             }else if(!regexTag.test(listaPalavras[indexBusca]) || !igonorarTags){
@@ -154,7 +156,7 @@ export class LinesDisplayComponent implements OnInit{
           }
 
           while(tempoLegenda == '' && indexBusca >= 0){
-            if(regexMarcacaoTempo.test(listaPalavras[indexBusca]))
+            if(regexMarcacaoTempo.test(listaPalavras[indexBusca]) || regexMarcacaoTempoEtiquetado.test(listaPalavras[indexBusca]))
               tempoLegenda = listaPalavras[indexBusca];
 
             --indexBusca;
@@ -163,6 +165,7 @@ export class LinesDisplayComponent implements OnInit{
           contadorPalavras = 0;
           for(let i = indice + termoBuscado.length; i < listaPalavras.length && contadorPalavras < direita ;++i){
             if(!regexMarcacaoTempo.test(listaPalavras[i]) &&
+               !regexMarcacaoTempoEtiquetado.test(listaPalavras[i]) &&
               (!regexTag.test(listaPalavras[i]) || !igonorarTags)){
               textoDireita += listaPalavras[i] + ' ';
               ++contadorPalavras;
@@ -232,11 +235,13 @@ export class LinesDisplayComponent implements OnInit{
     texto = texto.replace(/>([^\s]+)/g,replacer1);
     texto = texto.replace(/([^\s]+)</g,replacer2);
 
-    return texto.split(/\s+/);
+    return texto.split(/(?<!<[^<>]*)\s+|\s+(?![^<>]*>)/); //considera apenas espaços fora de tags
   }
 
-  isolarMarcacoesDeTempo(texto:string, regex){
-    texto = texto.replace(regex, (match, g1, g2)=>match.replace(g1, '\u0F12' + g1).replace(g2, g2 + '\u0F12'));
+  isolarMarcacoesDeTempo(texto:string, regexTempo, regexTempoEtiquetado){
+    texto = texto.replace(regexTempo, (match, g1, g2)=>match.replace(g1, '\u0F12' + g1).replace(g2, g2 + '\u0F12'));
+    texto = texto.replace(regexTempoEtiquetado, (match, g1, g2)=>match.replace(g1, '\u0F12' + g1).replace(g2, g2 + '\u0F12'));
+    console.log(texto);
     return texto.split(/\u0F12/);
   } 
 
