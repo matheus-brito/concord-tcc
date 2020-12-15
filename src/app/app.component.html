@@ -1,3 +1,26 @@
 <div id="main-screen">
-    <router-outlet></router-outlet>
+    <mat-toolbar color="primary">
+        <span>Concord4Subs</span>
+    </mat-toolbar>
+    <mat-tab-group [(selectedIndex)]="activeTabIndex" mat-align-tabs="center">
+        <mat-tab label="Opções">
+            <app-concord-form (onValidSubmit)="updateTabs()"
+                              (onInvalidSubmit)="hideTabs()">
+            </app-concord-form>
+        </mat-tab>
+        <mat-tab *ngIf="tabsVisible" label="Linhas De Corcondância">
+            <app-lines-display [formData]="formData"
+                               (onKeywordClick)="changeVideoTime($event)">
+            </app-lines-display>
+        </mat-tab>
+        <mat-tab *ngIf="tabsVisible" label="Arquivo Original">Content 2</mat-tab>
+        <mat-tab *ngIf="tabsVisible" label="Vídeo">
+            <app-video-display #videoDisplay
+                               [src]="formData.videoData"
+                               [time]="videoTime"
+                               (onTimeChange)="onVideoTimeChange()">
+            </app-video-display>
+        </mat-tab>
+        <mat-tab *ngIf="tabsVisible" label="Relatórios">Content 5</mat-tab>
+    </mat-tab-group>
 </div>

@@ -1,5 +1,6 @@
-import { Component, ElementRef, Input, OnDestroy, 
-         ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, Output,
+         EventEmitter, OnDestroy, ViewChild, 
+         ViewEncapsulation } from '@angular/core';
 import videojs from 'video.js';
 
 @Component({
@@ -11,21 +12,28 @@ import videojs from 'video.js';
 export class VideoDisplayComponent implements OnDestroy {
   @ViewChild('target',{static:true}) target:ElementRef;
 
-  @Input() videoSource;
+  @Input() src;
   @Input() time;
+
+  @Output() onTimeChange: EventEmitter<any> = new EventEmitter();
+
   player: videojs.Player;
   constructor(private elementRef: ElementRef) { }
 
   ngOnChanges(changes){
     //(<HTMLVideoElement>(<unknown>this.target)).src=this.src;
-    if(changes.videoSource){
+    if(changes.src){
       if(!this.player)
         this.player = videojs(this.target.nativeElement, null);
-      this.player.src(this.videoSource)
+      if(this.src)
+        this.player.src(this.src)
     }
     if(changes.time){
-      this.player.currentTime(this.time);
-      this.player.play();
+      if(this.time){
+        this.player.currentTime(this.time.newTime);
+        this.player.play();
+        this.onTimeChange.emit();
+      }
     }
   }
 
