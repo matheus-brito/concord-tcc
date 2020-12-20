@@ -22,6 +22,7 @@ import { ConcordFormComponent } from '../app/components/concord-form/concord-for
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LinesDisplayComponent } from './components/lines-display/lines-display.component';
 import { VideoDisplayComponent } from './components/video-display/video-display.component';
+import { RelatorioDisplayComponent } from './components/relatorio-display/relatorio-display.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { VideoDisplayComponent } from './components/video-display/video-display.
     ConcordFormComponent,
     NotFoundComponent,
     LinesDisplayComponent,
-    VideoDisplayComponent
+    VideoDisplayComponent,
+    RelatorioDisplayComponent
   ],
   imports: [
     BrowserModule,

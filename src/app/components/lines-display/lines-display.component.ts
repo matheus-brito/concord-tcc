@@ -76,7 +76,7 @@ export class LinesDisplayComponent implements OnInit{
         let regexStringVazia = new RegExp(/^$/);
         let palavrasAux = this.isolarMarcacoesDeTempo(this.fileText, regexMarcacaoTempoGlobal,regexMarcacaoTempoEtiquetadoGlobal);
         this.palavras = [];
-        console.log(palavrasAux)
+        //console.log(palavrasAux)
         palavrasAux.forEach((texto, indice)=>{
             if(regexMarcacaoTempo.test(texto) || regexMarcacaoTempoEtiquetado.test(texto)){
               this.palavras.push(texto);
@@ -89,7 +89,7 @@ export class LinesDisplayComponent implements OnInit{
             }
         });
         this.palavras = this.palavras.filter((valor)=>!(regexStringVazia.test(valor)));
-        console.log(this.palavras)
+        //console.log(this.palavras)
         this.lines = this.concordanciador(this.palavras,this.separarPalavras(this.formData.token), this.formData.tokensEsquerda,
                                           this.formData.tokensDireita, this.formData.caseSensitive,  this.formData.ignorarTags, 
                                           regexMarcacaoTempo, regexMarcacaoTempoEtiquetado, regexTag);
@@ -241,7 +241,7 @@ export class LinesDisplayComponent implements OnInit{
   isolarMarcacoesDeTempo(texto:string, regexTempo, regexTempoEtiquetado){
     texto = texto.replace(regexTempo, (match, g1, g2)=>match.replace(g1, '\u0F12' + g1).replace(g2, g2 + '\u0F12'));
     texto = texto.replace(regexTempoEtiquetado, (match, g1, g2)=>match.replace(g1, '\u0F12' + g1).replace(g2, g2 + '\u0F12'));
-    console.log(texto);
+    //console.log(texto);
     return texto.split(/\u0F12/);
   } 
 

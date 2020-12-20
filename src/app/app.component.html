@@ -21,6 +21,9 @@
                                (onTimeChange)="onVideoTimeChange()">
             </app-video-display>
         </mat-tab>
-        <mat-tab *ngIf="tabsVisible" label="Relatórios">Content 5</mat-tab>
+        <mat-tab *ngIf="tabsVisible" label="Relatórios">
+            <app-relatorio-display [formData]="formData">
+            </app-relatorio-display>
+        </mat-tab>
     </mat-tab-group>
 </div>
