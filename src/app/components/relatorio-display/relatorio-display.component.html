@@ -1,1 +1,19 @@
-<canvas #tagsDistintasGraf width="400" height="400"></canvas>
+<div class="outer-container">
+    <form>
+        <mat-form-field>
+            <input type="text"
+                placeholder="Tag"
+                matInput
+                [formControl]="myControl"
+                [matAutocomplete]="auto">
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="onSelectedTagChange($event.option.value)">
+                <mat-option *ngFor="let tagAtual of filteredOptions | async" [value]="tagAtual">
+                    {{ tagAtual }}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+    </form>
+    <div class="canvas-container">
+        <canvas #tagsDistintasGraf id="canvas"></canvas>
+    </div>
+</div>

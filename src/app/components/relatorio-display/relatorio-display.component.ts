@@ -1,5 +1,8 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Chart } from 'node_modules/chart.js/dist/Chart.js'
+import {FormControl} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
 
 @Component({
   selector: 'app-relatorio-display',
@@ -11,26 +14,49 @@ export class RelatorioDisplayComponent implements OnInit, AfterViewInit {
 
   @ViewChild('tagsDistintasGraf',{static:true}) tagsDistintasGraf:ElementRef;
 
+  regexTagGlobal = new RegExp(/<[^/\s<>](?:\s*[^\s<>]*)+>/g); //não considera tags de fechamento
+  
   fileText;
+  selectedTag = '';
   legendas=[];
   tags=[];
-  tagsDistintas=[];
-  relacaoTags = [];
+  tagsDistintas={};
+  relacaoTags = {};
+  relacaoTagsGrafico = null;
 
+  myControl = new FormControl();
+  filteredOptions: Observable<string[]>;
+  
   constructor() { }
 
   ngOnInit(){
-    this.processarTexto();
+
   }
 
   ngAfterViewInit(){
-    this.plotarTagsDistintas();
+    this.processarTexto();
   }
 
   ngOnChanges(changes){
     if(changes.formData && !changes.formData.firstChange){
+      this.selectedTag = '';
+      this.legendas=[];
+      this.tags=[];
+      this.tagsDistintas={};
+      this.relacaoTags = {};
+
+      if(this.relacaoTagsGrafico != null){
+        this.relacaoTagsGrafico.destroy();
+      }
+      
       this.processarTexto();
     }
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return Object.getOwnPropertyNames(this.tagsDistintas).filter(option => option.toLowerCase().indexOf(filterValue) === 0);
   }
 
   processarTexto(){
@@ -40,17 +66,18 @@ export class RelatorioDisplayComponent implements OnInit, AfterViewInit {
       
       reader.onload = () => {
         this.fileText = reader.result;
-       
-        let regexTagGlobal = new RegExp(/<[^/\s<>](?:\s*[^\s<>]*)+>/g); //não considera tags de fechamento
-        let regexStringVazia = new RegExp(/^$/);
-        this.tags = this.fileText.match(regexTagGlobal);
+
+        this.legendas = this.fileText.split(/\n[ \t\f\v]*(?:\r[ \t\f\v]*|\n[ \t\f\v]*)+/); //separando por linhas em branco
+        this.tags = this.fileText.match(this.regexTagGlobal);
         
         if(this.tags.length > 0){
           this.tags.sort();
           this.tagsDistintas = this.obterTagsDistintas();
-          console.log(this.tags)
-          console.log(this.tagsDistintas)
-          this.relacaoTags = this.obterRelacoes(regexTagGlobal);
+
+          this.filteredOptions = this.myControl.valueChanges.pipe(
+            startWith(''),
+            map(value => this._filter(value))
+          );
         }
       }
 
@@ -73,7 +100,7 @@ export class RelatorioDisplayComponent implements OnInit, AfterViewInit {
   }
 
   obterTagsDistintas(){
-    let tagsAux = [];
+    let tagsAux = {};
     let tagAtual = this.tags[0];
     let count = 1;
 
@@ -82,113 +109,104 @@ export class RelatorioDisplayComponent implements OnInit, AfterViewInit {
         ++count;
       }
       else{
-        tagsAux.push({tag: tagAtual, numOcorrencias:count});
+        tagsAux[tagAtual] = count;
         tagAtual = this.tags[i];
         count = 1;
       }
     }
 
     //adicionar última tag (ou primeira caso length == 1)
-    tagsAux.push({tag: tagAtual, numOcorrencias:count});
-
+    tagsAux[tagAtual] = count;
+    
     return tagsAux;
   }
 
-  obterRelacoes(regexTagGlobal){
-    let texto = this.fileText;
-    let legendas;
+  atualizarObjetosRelacoes(regexTagGlobal){
+    let regexSelectedTag = new RegExp(this.selectedTag); 
     let tagsLegenda;
-    let relacoes = this.construirMatrizRelacoes();
-    
-    console.log(relacoes)
+    let novaRelacao = {};
+    //let relacoes = this.construirMatrizRelacoes();
 
-    texto = this.formatarTagsTexto(texto);
+    //texto = this.formatarTagsTexto(texto);
     //console.log(texto);
-    legendas = texto.split(/\n[ \t\f\v]*(?:\r[ \t\f\v]*|\n[ \t\f\v]*)+/); //separando por linhas em branco
+    
     //legendas = texto.split(/(?:[\n\r]|[\n\n]){2,}/); //separando por linhas em branco
     //console.log(legendas);
     
-    legendas.forEach((legenda, indice) => {
-      tagsLegenda = legenda.match(regexTagGlobal);
-      
-      if(tagsLegenda != null){
-        for(let i = 0; i < tagsLegenda.length;++i){
-          tagsLegenda[i] = Number(tagsLegenda[i].replace('<','').replace('>',''));
-        }
+    this.legendas.forEach((legenda) => {
+      if(regexSelectedTag.test(legenda)){
+        tagsLegenda = legenda.match(regexTagGlobal);
 
-        for(let i = 0; i < tagsLegenda.length;++i){
-          for(let j = i+1; j < tagsLegenda.length;++j){
-            ++relacoes[tagsLegenda[i]][tagsLegenda[j]];
-            ++relacoes[tagsLegenda[j]][tagsLegenda[i]];
-          }
-        }
-
-        console.log(legenda);
-        console.log(tagsLegenda);
+          tagsLegenda.forEach(tag => {
+            if(tag != this.selectedTag){
+              if(novaRelacao.hasOwnProperty(tag)){
+                ++novaRelacao[tag];
+              }
+              else{
+                novaRelacao[tag] = 1;
+              }
+            }
+          });       
       }
     });
-    return relacoes;
+
+    this.relacaoTags[this.selectedTag] = novaRelacao;
   }
 
-  formatarTagsTexto(texto:string){
-    let regexAux;
-    this.tagsDistintas.forEach((dadosTag, indice)=>{
-      regexAux = new RegExp(dadosTag.tag, 'g');
-      texto = texto.replace(regexAux, '<' + indice + '>');
+  onSelectedTagChange(valorSelecionado){
+    
+    let dados = [];
+    let labels = [];
+    let tagsAssociadas;
+    
+    this.selectedTag = valorSelecionado;
+
+    console.log(this.selectedTag);
+
+    if(this.relacaoTagsGrafico){
+      this.relacaoTagsGrafico.destroy();
+    }
+    
+    if(!this.relacaoTags.hasOwnProperty(this.selectedTag)){
+      this.atualizarObjetosRelacoes(this.regexTagGlobal);
+    }
+    
+    tagsAssociadas = Object.getOwnPropertyNames(this.relacaoTags[this.selectedTag]);
+
+    tagsAssociadas.forEach(tag => {
+      labels.push(tag);
+      dados.push(this.relacaoTags[this.selectedTag][tag]);
     });
 
-    return texto;
+    this.plotarRelacoesTags(labels, dados);
   }
 
-  construirMatrizRelacoes(){
-    let relacoes = new Array(this.tagsDistintas.length);
-    
-    for(let i = 0; i < relacoes.length; ++i){
-      relacoes[i] = new Array(this.tagsDistintas.length);
-      relacoes[i].fill(0);
-    }
+  plotarRelacoesTags(labels, dados){
 
-    return relacoes;
-  }
-
-  plotarTagsDistintas(){
     let ctx = this.tagsDistintasGraf.nativeElement.getContext('2d');
-    console.log('elemento:'+ctx)
-    let tagsDistintasGrafico = new Chart(ctx, {
+    this.relacaoTagsGrafico = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            labels: labels,
             datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
+                label: 'Tags Associadas',
+                data: dados,
                 borderWidth: 1
             }]
         },
         options: {
+            responsive:true,
+            maitainAspectRatio:false,
             scales: {
                 yAxes: [{
                     ticks: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        stepSize:1
                     }
                 }]
             }
         }
     });
   }
+
 }

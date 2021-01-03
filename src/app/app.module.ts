@@ -7,8 +7,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
@@ -36,11 +39,14 @@ import { RelatorioDisplayComponent } from './components/relatorio-display/relato
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule, 
+    BrowserAnimationsModule,
+    MatAutocompleteModule, 
     MatButtonModule, 
     MatCheckboxModule, 
-    MatFormFieldModule, 
     MatInputModule,
+    MatSelectModule,
+    MatFormFieldModule, 
+    FormsModule,
     ReactiveFormsModule,
     MatIconModule,
     HttpClientModule,

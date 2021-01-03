@@ -1,3 +1,20 @@
-#tagsDistintasGraf{
-    width: 400px;
+.outer-container{
+    margin: 0;
+    padding: 0;
+    width:100%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.canvas-container{
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+#canvas{
+    min-width:100%;
+    min-height: 100%;
 }
