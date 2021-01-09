@@ -8,13 +8,40 @@
     align-items: flex-start;
 }
 
-.canvas-container{
-    width: 100%;
-    height: 100%;
-    overflow: auto;
+#canvas{
+    margin: 3%;
+    min-height: 400px;
+    min-width: 400px;
 }
 
-#canvas{
-    min-width:100%;
-    min-height: 100%;
+.table-container{
+    margin: 3%;
+    align-self: center;
+    width:70%;
+}
+
+table{
+    margin:0;
+    width:100%;
+    padding:0;
+}
+
+.mat-form-field{
+    margin: 3%;
+}
+
+.mat-row{
+    height:auto;
+}
+
+.mat-cell{
+    padding: 1% 1% 1% 1%;
+}
+
+.mat-cell{
+    text-align: center;
+}
+
+.mat-header-cell{
+    text-align: center;
 }

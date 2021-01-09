@@ -19,6 +19,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSortModule } from '@angular/material/sort';
 
 
 import { ConcordFormComponent } from '../app/components/concord-form/concord-form.component';
@@ -53,7 +54,8 @@ import { RelatorioDisplayComponent } from './components/relatorio-display/relato
     MatTableModule,
     MatPaginatorModule,
     MatTabsModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatSortModule
   ],
   providers: [],
   bootstrap: [AppComponent]
