@@ -1,54 +1,6 @@
-<div class="outer-container">
-    <h2>Relações Entre Tags</h2>
-    <form>
-        <mat-form-field>
-            <input type="text"
-                placeholder="Tag"
-                matInput
-                [formControl]="myControl"
-                [matAutocomplete]="auto">
-            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="onSelectedTagChange($event.option.value)">
-                <mat-option *ngFor="let tagAtual of filteredOptions | async" [value]="tagAtual">
-                    {{ tagAtual }}
-                </mat-option>
-            </mat-autocomplete>
-            <mat-hint>Selecione uma tag para visualizar as relações.</mat-hint>
-        </mat-form-field>
-    </form>
-    
-    <div class="table-container">
-        <mat-form-field id="filtroTabelaRelacoes">
-            <mat-label>Filtro para Tabela</mat-label>
-            <input matInput (keyup)="applyFilter($event)" placeholder="Ex.: <Tag_Buscada>" #input>
-        </mat-form-field>
-        <div class="mat-elevation-z8">
-            <table #elemTabelaRelacoes mat-table [dataSource]="dataSourceTabelaRelacoes" matSort>
-                
-                <!-- Position Column -->
-                <ng-container matColumnDef="tag">
-                    <th mat-header-cell *matHeaderCellDef> Tag </th>
-                    <td mat-cell *matCellDef="let element"> {{element.tag}} </td>
-                </ng-container>
-                
-                <!-- Name Column -->
-                <ng-container matColumnDef="quantidade">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header> Quantidade </th>
-                    <td mat-cell *matCellDef="let element"> {{element.quantidade}} </td>
-                </ng-container>
-                
-                <tr mat-header-row *matHeaderRowDef="colunasTabelaRelacoes"></tr>
-                <tr mat-row *matRowDef="let row; columns: colunasTabelaRelacoes;"></tr>
-                
-                <!-- Row shown when there is no matching data. -->
-                <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell" colspan="4">Tag "{{input.value}}" não encontrada.</td>
-                </tr>
-            </table>
-            <mat-paginator #paginatorTabelaRelacoes
-                        id="paginator" [pageSize]=10 
-                        [pageSizeOptions]="[5, 10, 20]" 
-                        showFirstLastButtons></mat-paginator>
-        </div>
-    </div>
-    <canvas #tagsDistintasGraf id="canvas"></canvas>
+<div>
+    <app-relatorio-relacoes [legendas]="legendas" 
+                            [tagsDistintas]="tagsDistintas" 
+                            [regexTagGlobal]="regexTagGlobal">
+    </app-relatorio-relacoes>
 </div>

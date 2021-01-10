@@ -27,6 +27,8 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LinesDisplayComponent } from './components/lines-display/lines-display.component';
 import { VideoDisplayComponent } from './components/video-display/video-display.component';
 import { RelatorioDisplayComponent } from './components/relatorio-display/relatorio-display.component';
+import { RelatorioRelacoesComponent } from './components/relatorio-relacoes/relatorio-relacoes.component';
+import { RelatorioGeralComponent } from './components/relatorio-geral/relatorio-geral.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +37,9 @@ import { RelatorioDisplayComponent } from './components/relatorio-display/relato
     NotFoundComponent,
     LinesDisplayComponent,
     VideoDisplayComponent,
-    RelatorioDisplayComponent
+    RelatorioDisplayComponent,
+    RelatorioRelacoesComponent,
+    RelatorioGeralComponent
   ],
   imports: [
     BrowserModule,
