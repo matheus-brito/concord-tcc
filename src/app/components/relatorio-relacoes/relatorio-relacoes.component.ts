@@ -1,11 +1,14 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { Chart } from 'node_modules/chart.js/dist/Chart.js'
+
 import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+
+import { Chart } from 'node_modules/chart.js/dist/Chart.js';
+import 'node_modules/chartjs-plugin-labels/src/chartjs-plugin-labels.js';
 
 @Component({
   selector: 'app-relatorio-relacoes',
@@ -188,7 +191,7 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
     totalOutros = 0;
 
     tagsAssociadas.forEach(tag => {
-      if(this.relacaoTags[this.selectedTag][tag]/total >= 0.03){
+      if(this.relacaoTags[this.selectedTag][tag]/total >= 0.01){
         labels.push(tag);
         dados.push(this.relacaoTags[this.selectedTag][tag]);
         
@@ -214,6 +217,16 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
   plotarRelacoesTags(labels, dados, cores){
 
     let ctx = this.relacaoTagsGraf.nativeElement.getContext('2d');
+
+    let hexToRgb = function(hex) {
+      let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    }
+
     this.relacaoTagsGrafico = new Chart(ctx, {
         type: 'pie',
         data: {
@@ -229,6 +242,18 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
           title: {
             display: true,
             text: 'Tags Relacionadas a ' + this.selectedTag
+          },
+          plugins: {
+            labels: {
+              render: 'percentage',
+              fontColor: function (data) {
+                let rgb = hexToRgb(data.dataset.backgroundColor[data.index]);
+                let threshold = 140;
+                let luminance = 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
+                return luminance > threshold ? 'black' : 'white';
+              },
+              precision: 2
+            }
           }
         }
     });
