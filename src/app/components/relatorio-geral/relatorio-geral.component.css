@@ -1,0 +1,55 @@
+.outer-container{
+    margin: 0;
+    padding: 0;
+    width:100%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+#canvas{
+    margin: 3%;
+    min-height: 500px;
+    min-width: 450px;
+}
+
+.table-container{
+    margin: 3%;
+    align-self: center;
+    width:70%;
+}
+
+table{
+    margin:0;
+    width:100%;
+    padding:0;
+}
+
+.mat-form-field{
+    margin: 3%;
+}
+
+.mat-row{
+    height:auto;
+}
+
+.mat-cell{
+    padding: 1% 1% 1% 1%;
+}
+
+.mat-cell{
+    text-align: center;
+}
+
+.mat-header-cell{
+    text-align: center;
+}
+
+.mat-footer-cell{
+    text-align: center;
+}
+
+tr.mat-footer-row {
+    font-weight: bold;
+}
