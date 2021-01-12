@@ -13,7 +13,10 @@
                                (onKeywordClick)="changeVideoTime($event)">
             </app-lines-display>
         </mat-tab>
-        <mat-tab *ngIf="tabsVisible" label="Arquivo Original">Content 2</mat-tab>
+        <mat-tab *ngIf="tabsVisible" label="Arquivo Original">
+            <app-arquivo-original [formData]="formData">
+            </app-arquivo-original>
+        </mat-tab>
         <mat-tab *ngIf="tabsVisible" label="Vídeo">
             <app-video-display #videoDisplay
                                [src]="formData.videoData"

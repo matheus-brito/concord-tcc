@@ -29,6 +29,7 @@ import { VideoDisplayComponent } from './components/video-display/video-display.
 import { RelatorioDisplayComponent } from './components/relatorio-display/relatorio-display.component';
 import { RelatorioRelacoesComponent } from './components/relatorio-relacoes/relatorio-relacoes.component';
 import { RelatorioGeralComponent } from './components/relatorio-geral/relatorio-geral.component';
+import { ArquivoOriginalComponent } from './components/arquivo-original/arquivo-original.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { RelatorioGeralComponent } from './components/relatorio-geral/relatorio-
     VideoDisplayComponent,
     RelatorioDisplayComponent,
     RelatorioRelacoesComponent,
-    RelatorioGeralComponent
+    RelatorioGeralComponent,
+    ArquivoOriginalComponent
   ],
   imports: [
     BrowserModule,
