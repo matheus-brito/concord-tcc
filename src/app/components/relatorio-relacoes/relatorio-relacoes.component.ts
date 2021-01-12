@@ -9,6 +9,7 @@ import { MatSort } from '@angular/material/sort';
 
 import { Chart } from 'node_modules/chart.js/dist/Chart.js';
 import 'node_modules/chartjs-plugin-labels/src/chartjs-plugin-labels.js';
+import 'node_modules/chartjs-plugin-doughnutlabel/dist/chartjs-plugin-doughnutlabel.js';
 
 @Component({
   selector: 'app-relatorio-relacoes',
@@ -228,7 +229,7 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
     }
 
     this.relacaoTagsGrafico = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: labels,
             datasets: [{
@@ -253,10 +254,23 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
                 return luminance > threshold ? 'black' : 'white';
               },
               precision: 2
+            },
+            doughnutlabel:{
+              labels:[{
+                text:function(data){
+                  return data.getDatasetMeta(0).total;
+                },
+                font: {
+                  size: '20',
+                  weight: 'bold'
+                } 
+              },
+              {
+                text:'Total'
+              }]
             }
           }
         }
     });
   }
-
 }
