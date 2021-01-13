@@ -14,12 +14,12 @@ import 'node_modules/chartjs-plugin-doughnutlabel/dist/chartjs-plugin-doughnutla
   templateUrl: './relatorio-geral.component.html',
   styleUrls: ['./relatorio-geral.component.css']
 })
-export class RelatorioGeralComponent implements OnInit, AfterViewInit {
+export class RelatorioGeralComponent implements OnInit {
 
   @ViewChild('paginatorTabelaDistintas') paginator: MatPaginator;
   @ViewChild('tagsDistintasGraf',{static:true}) tagsDistintasGraf:ElementRef;
   @ViewChild('filtroTabela',{static:true}) filtroTabela;
-  @ViewChild(MatSort) relacoesSort: MatSort;
+  @ViewChild(MatSort) sort: MatSort;
 
   @Input() tagsDistintas;
   @Input() legendas;
@@ -28,13 +28,11 @@ export class RelatorioGeralComponent implements OnInit, AfterViewInit {
   tagsDistintasGrafico = null;
   dataSourceTabelaDistintas;
   colunasTabelaDistintas = ["tag", "quantidade"];
+  defaultPageSize = 10;
 
   constructor() { }
 
   ngOnInit(): void {
-  }
-
-  ngAfterViewInit(){
     this.gerarRelatorio();
   }
 
@@ -43,6 +41,8 @@ export class RelatorioGeralComponent implements OnInit, AfterViewInit {
     if(changes.legendas && !changes.legendas.firstChange){
       this.filtroTabela.nativeElement.value = '';
       this.dataSourceTabelaDistintas = undefined;
+      this.sort.active = this.sort.direction = '';
+      this.paginator.pageSize = this.defaultPageSize;
 
       if(this.tagsDistintasGrafico != null){
         this.tagsDistintasGrafico.destroy();
@@ -87,8 +87,8 @@ export class RelatorioGeralComponent implements OnInit, AfterViewInit {
     this.dataSourceTabelaDistintas = new MatTableDataSource(dados);
     this.dataSourceTabelaDistintas.paginator = this.paginator;
 
-    console.log(this.relacoesSort)
-    this.dataSourceTabelaDistintas.sort = this.relacoesSort;
+    console.log(this.sort)
+    this.dataSourceTabelaDistintas.sort = this.sort;
   }
 
   montarGraficoRelacoes(){

@@ -15,7 +15,7 @@
 }
 
 .table-container{
-    margin: 3%;
+    margin: 0% 3% 3% 3%;
     align-self: center;
     width:70%;
 }
@@ -52,4 +52,15 @@ table{
 
 tr.mat-footer-row {
     font-weight: bold;
+}
+
+#totalTagsRelacionadas{
+    align-self: center;
+    margin: 3% 0 0 0;
+    width: 70%;
+}
+
+h4{
+    margin: 0;
+    padding: 0;
 }

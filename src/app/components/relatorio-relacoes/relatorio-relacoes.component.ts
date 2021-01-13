@@ -33,6 +33,8 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
   relacaoTagsGrafico = null;
   dataSourceTabelaRelacoes;
   colunasTabelaRelacoes = ["tag", "quantidade"];
+  defaultPageSize = 10;
+  numeroTagsRelacionadas = '-'
 
   myControl = new FormControl();
   filteredOptions: Observable<string[]>;
@@ -55,6 +57,9 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
       this.filtroTabela.nativeElement.value = '';
       this.tagSelector.nativeElement.value = '';
       this.dataSourceTabelaRelacoes = undefined;
+      this.relacoesSort.active = this.relacoesSort.direction = '';
+      this.paginator.pageSize = this.defaultPageSize;
+      this.numeroTagsRelacionadas = '-';
 
       if(this.relacaoTagsGrafico != null){
         this.relacaoTagsGrafico.destroy();
@@ -140,7 +145,7 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
     if(!this.relacaoTags.hasOwnProperty(this.selectedTag)){
       this.atualizarObjetosRelacoes(this.regexTagGlobal);
     }
-
+    
     this.montarDadosGraficoRelacoes();
     this.montarTabelaRelacoes();
   }
@@ -155,6 +160,7 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
 
     this.dataSourceTabelaRelacoes = new MatTableDataSource(dados);
     this.dataSourceTabelaRelacoes.paginator = this.paginator;
+    this.numeroTagsRelacionadas = dados.length.toString();
 
     console.log(this.relacoesSort)
     this.dataSourceTabelaRelacoes.sort = this.relacoesSort;
