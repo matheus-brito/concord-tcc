@@ -2,7 +2,7 @@
     <mat-toolbar color="primary">
         <span>Concord4Subs</span>
     </mat-toolbar>
-    <mat-tab-group [(selectedIndex)]="activeTabIndex" mat-align-tabs="center">
+    <mat-tab-group #tabs mat-align-tabs="center">
         <mat-tab label="Opções">
             <app-concord-form (onValidSubmit)="updateTabs()"
                               (onInvalidSubmit)="hideTabs()">

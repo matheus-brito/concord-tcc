@@ -2,7 +2,7 @@ import { Component, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { ConcordFormComponent } from './components/concord-form/concord-form.component';
 import { LinesDisplayComponent } from './components/lines-display/lines-display.component';
 import { VideoDisplayComponent } from './components/video-display/video-display.component';
-
+import { MatTabGroup } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +12,7 @@ import { VideoDisplayComponent } from './components/video-display/video-display.
 export class AppComponent{
   @ViewChild(ConcordFormComponent, {static:true}) form!:ConcordFormComponent;
   @ViewChild(LinesDisplayComponent, {static:true}) linesDisplay!:LinesDisplayComponent;
+  @ViewChild('tabs') tabs: MatTabGroup;
   @ViewChildren('videoDisplay') videoDisplay!:QueryList<VideoDisplayComponent>;
 
   activeTabIndex;
@@ -22,7 +23,7 @@ export class AppComponent{
   updateTabs(){
     this.formData = this.form.concordForm.value;
     this.tabsVisible = true;
-    this.activeTabIndex = 1;
+    this.tabs.selectedIndex = 1;
   }
   hideTabs(){
     this.tabsVisible = false;
@@ -33,6 +34,6 @@ export class AppComponent{
   }
   onVideoTimeChange(){
     if(!this.videoDisplay.first.player.isInPictureInPicture())
-      this.activeTabIndex = 3;
+      this.tabs.selectedIndex = 3;
   }
 }
