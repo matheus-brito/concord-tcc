@@ -162,7 +162,7 @@ export class LinesDisplayComponent implements OnInit{
           for(let i = indice + termoBuscado.length; i < listaPalavras.length && contadorPalavras < direita ;++i){
             if(!regexMarcacaoTempo.test(listaPalavras[i]) &&
                !regexMarcacaoTempoEtiquetado.test(listaPalavras[i]) &&
-               listaPalavras[indexBusca] != this.caractereLinhasEmBranco &&
+               listaPalavras[i] != this.caractereLinhasEmBranco &&
               (!regexTag.test(listaPalavras[i]) || !igonorarTags)){
               textoDireita += listaPalavras[i] + ' ';
               ++contadorPalavras;
