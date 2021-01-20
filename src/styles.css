@@ -3,12 +3,15 @@
 html, body { height: 1vmax; background-color: whitesmoke;}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-.mat-tab-body-content{
+div .mat-tab-body-content{
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
     justify-content: center;
     padding-top: 1%;
+    height:min-content;
+    padding-top: 2%;
+    padding-bottom: 3%;
 }
 
 .mat-tab-group{

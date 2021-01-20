@@ -1,8 +1,9 @@
 .display-area{
     height: fit-content;
-    width: max-content;  
+    max-width: 90%;
     overflow:auto;
     resize: horizontal;
+    margin: auto;
 }
 
 table{
@@ -15,6 +16,7 @@ table{
 }
 .mat-cell{
     padding: 1% 1% 1% 1%;
+    min-width: min-content;
 }
 
 #contexto-esquerda.mat-cell{
