@@ -21,8 +21,8 @@ export class LinesDisplayComponent implements OnInit{
   linhasTabela;// = new MatTableDataSource<PeriodicElement>([{position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'}]);
   fileText;
   palavras = [];
-  caractereLinhasEmBranco = '\u26F8';
-
+  stringLinhasEmBranco = '\u26F8\u26F8';
+  stringIdentficadorTempo = '\u2711\u2711';
   constructor() {}
 
   ngOnInit(){
@@ -70,34 +70,36 @@ export class LinesDisplayComponent implements OnInit{
       reader.onload = () => {
         this.fileText = reader.result;
         let regexMarcacaoTempoEtiquetado = new RegExp(/^(\d{2})\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})$/);
-        let regexMarcacaoTempoEtiquetadoGlobal = new RegExp(/(?<=\u26F8\s*(?:<[^<>]+>\s*)+)(\d{2})\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
-        let regexMarcacaoTempo = new RegExp(/([1-9])\d*\s+\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/);
-        let regexMarcacaoTempoGlobal = new RegExp(/([1-9])\d*\s+\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
+        let regexMarcacaoTempoGlobal = new RegExp(/\u26F8{2}\s*(?:<[^<>]+>\s*)*\s*([1-9]\d*\s*){0,1}\s*(?:<[^<>]+>\s*)*\s*(\d{2})\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
+        let regexMarcacaoTempo = new RegExp(/\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/);
+        //let regexMarcacaoTempoGlobal = new RegExp(/([1-9])\d*\s+\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
         let regexTag = new RegExp(/^<(?:[^\s<>]+\s*)+>$/);
         let regexStringVazia = new RegExp(/^$/);
+        let regexIdentificadorTempo = new RegExp(this.stringIdentficadorTempo,'');
         let textoAux = this.marcarLinhasEmBranco(this.fileText);
-        let palavrasAux = this.isolarMarcacoesDeTempo(textoAux, regexMarcacaoTempoGlobal,regexMarcacaoTempoEtiquetadoGlobal);
+        textoAux = this.stringLinhasEmBranco + ' ' + textoAux;
+        let palavrasAux = this.isolarMarcacoesDeTempo(textoAux, regexMarcacaoTempoGlobal);
         this.palavras = [];
-        console.log(textoAux)
+        console.log(palavrasAux)
         palavrasAux.forEach((texto, indice)=>{
-            if(regexMarcacaoTempo.test(texto) || regexMarcacaoTempoEtiquetado.test(texto)){
+            if(regexIdentificadorTempo.test(texto)){
               this.palavras.push(texto);
 
               if(!this.formData.ignorarTempo)
-                this.palavras.push(...this.separarPalavras(texto));
+                this.palavras.push(...this.separarPalavras(texto.replace(regexIdentificadorTempo, '')));
             }
             else{
               this.palavras.push(...this.separarPalavras(texto));
             }
         });
         this.palavras = this.palavras.filter((valor)=>!(regexStringVazia.test(valor)));
-        //console.log(this.palavras)
+        console.log(this.palavras)
         this.lines = this.concordanciador(this.palavras,this.separarPalavras(this.formData.token), this.formData.tokensEsquerda,
                                           this.formData.tokensDireita, this.formData.caseSensitive,  this.formData.ignorarTags, 
-                                          regexMarcacaoTempo, regexMarcacaoTempoEtiquetado, regexTag);
+                                          regexMarcacaoTempo, regexIdentificadorTempo, regexTag);
         this.linhasTabela = new MatTableDataSource<Contexto>(this.lines);
         this.linhasTabela.paginator = this.paginator;
-        console.log(this.lines);
+        //console.log(this.lines);
       }
 
       readerTesteISO.onload = ()=>{
@@ -120,7 +122,7 @@ export class LinesDisplayComponent implements OnInit{
 
   concordanciador(listaPalavras,termoBuscado:string[], esquerda:number, 
                   direita:number, caseSensitive:boolean, igonorarTags:boolean,
-                  regexMarcacaoTempo, regexMarcacaoTempoEtiquetado, regexTag){
+                  regexMarcacaoTempo, regexIdentificadorTempo, regexTag){
     let linhasConcord=[];
     
     let indexBusca;
@@ -148,9 +150,8 @@ export class LinesDisplayComponent implements OnInit{
           contadorPalavras = 0;
 
           for(indexBusca = indice-1; indexBusca >= 0 && contadorPalavras < esquerda; --indexBusca){
-            if(!(regexMarcacaoTempo.test(listaPalavras[indexBusca]) ||
-               regexMarcacaoTempoEtiquetado.test(listaPalavras[indexBusca])) &&
-               listaPalavras[indexBusca] != this.caractereLinhasEmBranco){
+            if(!(regexIdentificadorTempo.test(listaPalavras[indexBusca])) &&
+               listaPalavras[indexBusca] != this.stringLinhasEmBranco){
               if(!regexTag.test(listaPalavras[indexBusca]) || !igonorarTags){
                 textoEsquerda = listaPalavras[indexBusca] + ' ' + textoEsquerda;
                 ++contadorPalavras;
@@ -160,16 +161,15 @@ export class LinesDisplayComponent implements OnInit{
 
           contadorPalavras = 0;
           for(let i = indice + termoBuscado.length; i < listaPalavras.length && contadorPalavras < direita ;++i){
-            if(!regexMarcacaoTempo.test(listaPalavras[i]) &&
-               !regexMarcacaoTempoEtiquetado.test(listaPalavras[i]) &&
-               listaPalavras[i] != this.caractereLinhasEmBranco &&
+            if(!regexIdentificadorTempo.test(listaPalavras[i]) &&
+               listaPalavras[i] != this.stringLinhasEmBranco &&
               (!regexTag.test(listaPalavras[i]) || !igonorarTags)){
               textoDireita += listaPalavras[i] + ' ';
               ++contadorPalavras;
             }
           }
 
-          tempoLegenda = this.encontrarTempoLegenda(listaPalavras, indice, regexMarcacaoTempo, regexMarcacaoTempoEtiquetado);
+          tempoLegenda = this.encontrarTempoLegenda(listaPalavras, indice, regexMarcacaoTempo, regexIdentificadorTempo);
           linhasConcord.push({contexto_esquerda: textoEsquerda.trim(), palavra_chave: {keyword:termoEncontrado, time:tempoLegenda}, contexto_direita: textoDireita.trim()});
           textoEsquerda = textoDireita = '';
         }
@@ -209,15 +209,15 @@ export class LinesDisplayComponent implements OnInit{
     return termoEncontrado;
   }
 
-  encontrarTempoLegenda(listaPalavras, indice, regexMarcacaoTempo, regexMarcacaoTempoEtiquetado){
-    for(let i = indice; indice >=0 && listaPalavras[i] != this.caractereLinhasEmBranco; --i){
-      if(regexMarcacaoTempo.test(listaPalavras[i]) || regexMarcacaoTempoEtiquetado.test(listaPalavras[i])){
+  encontrarTempoLegenda(listaPalavras, indice, regexMarcacaoTempo, regexIdentificadorTempo){
+    for(let i = indice; indice >=0 && listaPalavras[i] != this.stringLinhasEmBranco; --i){
+      if(regexIdentificadorTempo.test(listaPalavras[i]) && regexMarcacaoTempo.test(listaPalavras[i])){
         return listaPalavras[i];
       }
     }
 
-    for(let i = indice; indice < listaPalavras.length && listaPalavras[i] != this.caractereLinhasEmBranco; ++i){
-      if(regexMarcacaoTempo.test(listaPalavras[i]) || regexMarcacaoTempoEtiquetado.test(listaPalavras[i])){
+    for(let i = indice; indice < listaPalavras.length && listaPalavras[i] != this.stringLinhasEmBranco; ++i){
+      if(regexIdentificadorTempo.test(listaPalavras[i]) && regexMarcacaoTempo.test(listaPalavras[i])){
         return listaPalavras[i];
       }
     }
@@ -254,15 +254,22 @@ export class LinesDisplayComponent implements OnInit{
   }
 
   marcarLinhasEmBranco(texto:string){
-    texto = texto.replace(/(\n[ \t\f\v]*(?:\r[ \t\f\v]*|\n[ \t\f\v]*)+)/g, (match, g1)=>match.replace(g1, ' ' + this.caractereLinhasEmBranco + ' '));
+    texto = texto.replace(/(\n[ \t\f\v]*(?:\r[ \t\f\v]*|\n[ \t\f\v]*)+)/g, (match, g1)=>match.replace(g1, ' ' + this.stringLinhasEmBranco + ' '));
     return texto;
   }
 
-  isolarMarcacoesDeTempo(texto:string, regexTempo, regexTempoEtiquetado){
-    texto = texto.replace(regexTempo, (match, g1, g2)=>match.replace(g1, '\u26F7' + g1).replace(g2, g2 + '\u26F7'));
-    texto = texto.replace(regexTempoEtiquetado, (match, g1, g2)=>match.replace(g1, '\u26F7' + g1).replace(g2, g2 + '\u26F7'));
-    //console.log(texto);
-    return texto.split(/\u26F7/);
+  isolarMarcacoesDeTempo(texto:string, regexTempo){
+    let marcacaoTempoAux = '\u26F7\u26F7';
+    texto = texto
+            .replace(regexTempo, 
+                (match, g1, g2, g3)=>match
+                                .replace(g1, marcacaoTempoAux + this.stringIdentficadorTempo + 
+                                             g1 + marcacaoTempoAux)
+                                .replace(g2, marcacaoTempoAux + this.stringIdentficadorTempo + g2)
+                                .replace(g3, g3 + marcacaoTempoAux));
+    //texto = texto.replace(regexTempoEtiquetado, (match, g1, g2)=>match.replace(g1, '\u26F7' + g1).replace(g2, g2 + '\u26F7'));
+    console.log(texto);
+    return texto.split(new RegExp(marcacaoTempoAux));
   } 
 
 }
