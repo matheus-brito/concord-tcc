@@ -17,19 +17,31 @@ export class VideoDisplayComponent implements OnDestroy {
 
   @Output() onTimeChange: EventEmitter<any> = new EventEmitter();
 
+  hasSrc = true;
+
   player: videojs.Player;
   constructor(private elementRef: ElementRef) { }
 
   ngOnChanges(changes){
     //(<HTMLVideoElement>(<unknown>this.target)).src=this.src;
     if(changes.src){
-      if(!this.player)
+      if(!this.player){
         this.player = videojs(this.target.nativeElement, null);
-      if(this.src)
-        this.player.src(this.src)
+      }
+      if(this.src){
+        this.player.src(this.src);
+        this.player.show();
+        this.hasSrc = true;
+      }
+      else{
+        this.player.hide();
+        this.hasSrc = false;
+      }
+
+      this.player.currentTime(0);
     }
     if(changes.time){
-      if(this.time){
+      if(this.src && this.time){
         this.player.currentTime(this.time.newTime);
         this.player.play();
         this.onTimeChange.emit();

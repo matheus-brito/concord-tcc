@@ -1,1 +1,5 @@
 @import '~video.js/dist/video-js.css';
+
+h1#mensagemSemVideo{
+    margin-top: 5%;
+}
