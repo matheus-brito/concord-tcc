@@ -23,6 +23,9 @@ export class LinesDisplayComponent implements OnInit{
   palavras = [];
   stringLinhasEmBranco = '\u26F8\u26F8';
   stringIdentficadorTempo = '\u2711\u2711';
+  defaultPageSize = 10;
+  ocorrenciasEncontradas = true;
+
   constructor() {}
 
   ngOnInit(){
@@ -31,6 +34,8 @@ export class LinesDisplayComponent implements OnInit{
 
   ngOnChanges(changes){
     if(changes.formData && !changes.formData.firstChange){
+      this.ocorrenciasEncontradas = true;
+
       this.processarDadosFormulario();
     }
   }
@@ -69,7 +74,7 @@ export class LinesDisplayComponent implements OnInit{
       
       reader.onload = () => {
         this.fileText = reader.result;
-        let regexMarcacaoTempoEtiquetado = new RegExp(/^(\d{2})\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})$/);
+        //let regexMarcacaoTempoEtiquetado = new RegExp(/^(\d{2})\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})$/);
         let regexMarcacaoTempoGlobal = new RegExp(/\u26F8{2}\s*(?:<[^<>]+>\s*)*\s*([1-9]\d*\s*){0,1}\s*(?:<[^<>]+>\s*)*\s*(\d{2})\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
         let regexMarcacaoTempo = new RegExp(/\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/);
         //let regexMarcacaoTempoGlobal = new RegExp(/([1-9])\d*\s+\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
@@ -97,9 +102,16 @@ export class LinesDisplayComponent implements OnInit{
         this.lines = this.concordanciador(this.palavras,this.separarPalavras(this.formData.token), this.formData.tokensEsquerda,
                                           this.formData.tokensDireita, this.formData.caseSensitive,  this.formData.ignorarTags, 
                                           regexMarcacaoTempo, regexIdentificadorTempo, regexTag);
+         
         this.linhasTabela = new MatTableDataSource<Contexto>(this.lines);
         this.linhasTabela.paginator = this.paginator;
-        //console.log(this.lines);
+        this.linhasTabela.paginator.firstPage();
+        this.paginator.pageSize = this.defaultPageSize;
+        
+        if(this.lines.length == 0){
+          this.ocorrenciasEncontradas = false;
+        }   
+        console.log(this.lines);
       }
 
       readerTesteISO.onload = ()=>{
@@ -170,6 +182,8 @@ export class LinesDisplayComponent implements OnInit{
           }
 
           tempoLegenda = this.encontrarTempoLegenda(listaPalavras, indice, regexMarcacaoTempo, regexIdentificadorTempo);
+          
+          //console.log("Saiu");
           linhasConcord.push({contexto_esquerda: textoEsquerda.trim(), palavra_chave: {keyword:termoEncontrado, time:tempoLegenda}, contexto_direita: textoDireita.trim()});
           textoEsquerda = textoDireita = '';
         }
@@ -181,7 +195,7 @@ export class LinesDisplayComponent implements OnInit{
   buscarTermo(listaPalavras, indice, termoBuscado:string[], regexIgnoreCaseFlag){
     let termoEncontrado = null;
     let palavra = listaPalavras[indice];
-
+    
     if(termoBuscado.length == 1){
       termoEncontrado = palavra;
     }
@@ -210,13 +224,14 @@ export class LinesDisplayComponent implements OnInit{
   }
 
   encontrarTempoLegenda(listaPalavras, indice, regexMarcacaoTempo, regexIdentificadorTempo){
-    for(let i = indice; indice >=0 && listaPalavras[i] != this.stringLinhasEmBranco; --i){
+    //console.log("Entrou");
+    for(let i = indice; i >=0 && listaPalavras[i] != this.stringLinhasEmBranco; --i){
       if(regexIdentificadorTempo.test(listaPalavras[i]) && regexMarcacaoTempo.test(listaPalavras[i])){
         return listaPalavras[i];
       }
     }
 
-    for(let i = indice; indice < listaPalavras.length && listaPalavras[i] != this.stringLinhasEmBranco; ++i){
+    for(let i = indice; i < listaPalavras.length && listaPalavras[i] != this.stringLinhasEmBranco; ++i){
       if(regexIdentificadorTempo.test(listaPalavras[i]) && regexMarcacaoTempo.test(listaPalavras[i])){
         return listaPalavras[i];
       }

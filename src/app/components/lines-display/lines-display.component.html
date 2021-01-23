@@ -2,8 +2,8 @@
     <pre class="lineItem" *ngFor="let line of lines" [innerHTML]="line">
     </pre>
 </div> -->
-
-<div class="mat-elevation-z8 display-area">
+<h1 id = "mensagemNenhumaOcorrenciaEncontrada" *ngIf="!ocorrenciasEncontradas">Nenhuma Ocorrência Encontrada. :(</h1>
+<div *ngIf="ocorrenciasEncontradas" class="mat-elevation-z8 display-area">
     <table id="tabela-contexto" mat-table [dataSource]="linhasTabela">
   
       <!-- Contexto à Esquerda  -->
@@ -28,7 +28,7 @@
       <tr mat-row *matRowDef="let row; columns: colunasTabela;"></tr>
     </table>
 
-    <mat-paginator id="paginator" [pageSize]=10 
+    <mat-paginator id="paginator" [pageSize]="defaultPageSize" 
                                   [pageSizeOptions]="[5, 10, 20]" 
                                   showFirstLastButtons></mat-paginator>
 </div>
