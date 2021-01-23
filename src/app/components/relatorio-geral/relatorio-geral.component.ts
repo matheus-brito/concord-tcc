@@ -87,7 +87,7 @@ export class RelatorioGeralComponent implements OnInit {
     this.dataSourceTabelaDistintas = new MatTableDataSource(dados);
     this.dataSourceTabelaDistintas.paginator = this.paginator;
 
-    console.log(this.sort)
+    //console.log(this.sort)
     this.dataSourceTabelaDistintas.sort = this.sort;
   }
 

@@ -1,4 +1,6 @@
-<div>
+<h1 id = "mensagemNenhumaTagEncontrada" *ngIf="!tagsEncontradas">Nenhuma Tag Encontrada. :(</h1>
+
+<div *ngIf="tagsEncontradas">
     <app-relatorio-geral [legendas]="legendas" 
                          [tagsDistintas]="tagsDistintas" 
                          [regexTagGlobal]="regexTagGlobal">

@@ -14,6 +14,7 @@ export class RelatorioDisplayComponent implements OnInit {
   legendas=[];
   tags=[];
   tagsDistintas={};
+  tagsEncontradas = true;
 
   constructor() { }
 
@@ -30,6 +31,7 @@ export class RelatorioDisplayComponent implements OnInit {
       this.legendas=[];
       this.tags=[];
       this.tagsDistintas={};
+      this.tagsEncontradas = true;
 
       this.processarTexto();
     }
@@ -46,9 +48,12 @@ export class RelatorioDisplayComponent implements OnInit {
         this.legendas = this.fileText.split(/\n[ \t\f\v]*(?:\r[ \t\f\v]*|\n[ \t\f\v]*)+/); //separando por linhas em branco
         this.tags = this.fileText.match(this.regexTagGlobal);
         
-        if(this.tags.length > 0){
+        if(this.tags != null && this.tags.length > 0){
           this.tags.sort();
           this.tagsDistintas = this.obterTagsDistintas();
+        }
+        else{
+          this.tagsEncontradas = false;
         }
       }
 
