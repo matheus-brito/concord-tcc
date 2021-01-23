@@ -46,6 +46,12 @@ form{
 }
 
 button#submit-button.form-field{
+    margin-top: 5%;
+    align-self: center;
+    width: 50%;
+}
+
+button#clear-button.form-field{
     align-self: center;
     width: 50%;
 }

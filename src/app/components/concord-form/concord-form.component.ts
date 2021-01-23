@@ -53,6 +53,10 @@ export class ConcordFormComponent implements OnInit {
     }
   }
 
+  limparForm(){
+    this.concordForm.reset();
+  }
+
   onChangeUploadTextButton(event){
     if(event.target.files && event.target.files[0]){
       this.concordForm.controls.arquivo.setValue(event.target.files[0].name);
