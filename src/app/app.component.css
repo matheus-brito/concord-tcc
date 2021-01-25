@@ -4,3 +4,8 @@
     align-items: center;
     justify-content: center;
 }
+
+img#logo{
+    width: 3em;
+    margin: 0 1em 0 1em;
+}
