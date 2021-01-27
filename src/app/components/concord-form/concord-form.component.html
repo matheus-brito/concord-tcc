@@ -1,11 +1,11 @@
 <div class="form">
-<form [formGroup] = "concordForm" (submit)="submit()">
+<form [formGroup] = "concordForm" (submit)="submit()" (keydown)="onKeyDown($event)">
     <div class="input-file">
         <button class="form-field" type="button" mat-raised-button (click)="fileInput.click()">Escolher Arquivo</button>
         <input hidden (change)="onChangeUploadTextButton($event)" #fileInput type="file" id="file"/>
         <mat-form-field class="form-field">     
-            <mat-label>Arquivo</mat-label>
-            <input #fileNameField  id="fileName" matInput formControlName="arquivo" readonly/>
+            <mat-label>Arquivo (.txt, .srt)</mat-label>
+            <input #fileNameField  id="fileName" matInput accept=".txt,.srt" formControlName="arquivo" readonly/>
             <mat-error *ngIf="concordForm.controls.arquivo.touched && concordForm.controls.arquivo.invalid">
                 <span *ngIf="concordForm.controls.arquivo.errors.required">Campo Obrigatório</span>
                 <span *ngIf="concordForm.controls.arquivo.errors.textExtensionValidator">Tipo de Arquivo Inválido.</span>
@@ -15,12 +15,13 @@
     </div>
     <div class="input-file">
         <button class="form-field" type="button" mat-raised-button (click)="videoInput.click()">Escolher Vídeo</button>
-        <input hidden (change)="onChangeSelectVideoButton($event)" #videoInput type="file" id="videoFile">
+        <input hidden (change)="onChangeSelectVideoButton($event)" #videoInput accept=".mp4,.webm" type="file" id="videoFile">
         <mat-form-field class="form-field">     
-            <mat-label>Vídeo</mat-label>
+            <mat-label>Vídeo (.mp4, .webm)</mat-label>
             <input matInput formControlName="video" readonly/>
             <mat-error *ngIf="concordForm.controls.video.touched && concordForm.controls.video.invalid">
                 <span *ngIf="concordForm.controls.video.errors.required">Campo Obrigatório</span>
+                <span *ngIf="concordForm.controls.video.errors.videoExtensionValidator">Tipo de Arquivo Inválido.</span>
             </mat-error>
         </mat-form-field>
         <mat-icon (click)="onClickDeleteIcon(videoInput.id)" class="delete-icon" svgIcon="xIcon"></mat-icon>

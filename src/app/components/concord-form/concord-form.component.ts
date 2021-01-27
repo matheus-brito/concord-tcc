@@ -31,7 +31,7 @@ export class ConcordFormComponent implements OnInit {
     this.concordForm = this.formBuilder.group({
       arquivoURL:[this.uploadedText, null],
       arquivo:[null, [Validators.required, this.textExtensionValidator]],
-      video:[null, null],
+      video:[null, [this.videoExtensionValidator]],
       videoData:[null, null],
       token:[null,[Validators.required]],
       tokensEsquerda:[10,[Validators.required, Validators.min(1)]],
@@ -90,6 +90,15 @@ export class ConcordFormComponent implements OnInit {
     inputFile.dispatchEvent(event);
   }
 
+  onKeyDown(event){
+    if(event.keyCode == 13){
+      event.preventDefault();
+      //console.log("Default prevenido!");
+      document.getElementById("submit-button").click();
+      return false;
+    }
+  }
+
   textExtensionValidator(control:AbstractControl):{[key:string]:boolean}|null {
     if(control.value == null)
       return null;
@@ -97,5 +106,14 @@ export class ConcordFormComponent implements OnInit {
       return null;
     else
       return {'textExtensionValidator':true};
+  }
+
+  videoExtensionValidator(control:AbstractControl):{[key:string]:boolean}|null {
+    if(control.value == null)
+      return null;
+    else if(control.value.match(/^.*.(mp4|webm)$/))
+      return null;
+    else
+      return {'videoExtensionValidator':true};
   }
 }
