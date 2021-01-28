@@ -3,3 +3,8 @@
 h1#mensagemSemVideo{
     margin-top: 5%;
 }
+
+div#video-wrapper{
+    width: 72em;
+    height: 40.5em;
+}

@@ -46,7 +46,7 @@ export class VideoDisplayComponent implements OnDestroy {
 
   criarVideo(){
     if(!this.player){
-      this.player = videojs(this.target.nativeElement, null);
+      this.player = videojs(this.target.nativeElement, {fill:true});
     }
   }
 
