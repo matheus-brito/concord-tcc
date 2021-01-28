@@ -25,19 +25,8 @@ export class VideoDisplayComponent implements OnDestroy {
   ngOnChanges(changes){
     //(<HTMLVideoElement>(<unknown>this.target)).src=this.src;
     if(changes.src){
-      if(!this.player){
-        this.player = videojs(this.target.nativeElement, null);
-      }
-      if(this.src){
-        this.player.src(this.src);
-        this.player.show();
-        this.hasSrc = true;
-      }
-      else{
-        this.player.hide();
-        this.hasSrc = false;
-      }
-
+      this.criarVideo();
+      this.setVideoSource();
       this.player.currentTime(0);
     }
     if(changes.time){
@@ -55,4 +44,21 @@ export class VideoDisplayComponent implements OnDestroy {
     }
   }
 
+  criarVideo(){
+    if(!this.player){
+      this.player = videojs(this.target.nativeElement, null);
+    }
+  }
+
+  setVideoSource(){
+    if(this.src){
+      this.player.src(this.src);
+      this.player.show();
+      this.hasSrc = true;
+    }
+    else{
+      this.player.hide();
+      this.hasSrc = false;
+    }
+  }
 }
