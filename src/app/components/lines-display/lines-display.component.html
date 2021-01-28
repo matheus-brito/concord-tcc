@@ -15,7 +15,9 @@
       <!-- Palavra-Chave -->
       <ng-container matColumnDef="palavra_chave">  
         <th mat-header-cell *matHeaderCellDef> Palavra-Chave </th>
-        <td mat-cell id="palavra-chave" (click)="onPalavraChaveClick(element.palavra_chave.time)" *matCellDef="let element">{{element.palavra_chave.keyword}}</td>
+        <td mat-cell id="palavra-chave" (click)="onPalavraChaveClick(element.palavra_chave.time)" 
+            [ngClass]="{'clickable-cell': formData && formData.videoData}" 
+            *matCellDef="let element">{{element.palavra_chave.keyword}}</td>
       </ng-container>
   
       <!-- Contexto à Direita -->
