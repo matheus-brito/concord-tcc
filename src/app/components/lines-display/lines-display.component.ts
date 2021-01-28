@@ -22,7 +22,8 @@ export class LinesDisplayComponent implements OnInit{
   fileText;
   palavras = [];
   stringLinhasEmBranco = '\u26F8\u26F8';
-  stringIdentficadorTempo = '\u2711\u2711';
+  stringIdentficadorTempoControle = '\u2711\u2711';
+  stringIdentficadorTempo = '\u26F2\u26F2';
   defaultPageSize = 10;
   ocorrenciasEncontradas = true;
 
@@ -74,12 +75,14 @@ export class LinesDisplayComponent implements OnInit{
       
       reader.onload = () => {
         this.fileText = reader.result;
+        let palavrasSeparadas;
         //let regexMarcacaoTempoEtiquetado = new RegExp(/^(\d{2})\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})$/);
         let regexMarcacaoTempoGlobal = new RegExp(/\u26F8{2}\s*(?:<[^<>]+>\s*)*\s*([1-9]\d*\s*){0,1}\s*(?:<[^<>]+>\s*)*\s*(\d{2})\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
         let regexMarcacaoTempo = new RegExp(/\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/);
         //let regexMarcacaoTempoGlobal = new RegExp(/([1-9])\d*\s+\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
         let regexTag = new RegExp(/^<(?:[^\s<>]+\s*)+>$/);
         let regexStringVazia = new RegExp(/^$/);
+        let regexIdentificadorTempoControle = new RegExp(this.stringIdentficadorTempoControle,'');
         let regexIdentificadorTempo = new RegExp(this.stringIdentficadorTempo,'');
         let textoAux = this.marcarLinhasEmBranco(this.fileText);
         textoAux = this.stringLinhasEmBranco + ' ' + textoAux;
@@ -87,11 +90,15 @@ export class LinesDisplayComponent implements OnInit{
         this.palavras = [];
         console.log(palavrasAux)
         palavrasAux.forEach((texto, indice)=>{
-            if(regexIdentificadorTempo.test(texto)){
+            if(regexIdentificadorTempoControle.test(texto)){
               this.palavras.push(texto);
 
-              if(!this.formData.ignorarTempo)
-                this.palavras.push(...this.separarPalavras(texto.replace(regexIdentificadorTempo, '')));
+                palavrasSeparadas = this.separarPalavras(texto.replace(regexIdentificadorTempoControle, ''));
+                for(let i = 0; i < palavrasSeparadas.length; ++i){
+                  palavrasSeparadas[i] = this.stringIdentficadorTempo + palavrasSeparadas[i];
+                }
+
+                this.palavras.push(...palavrasSeparadas);
             }
             else{
               this.palavras.push(...this.separarPalavras(texto));
@@ -101,7 +108,8 @@ export class LinesDisplayComponent implements OnInit{
         console.log(this.palavras)
         this.lines = this.concordanciador(this.palavras,this.separarPalavras(this.formData.token), this.formData.tokensEsquerda,
                                           this.formData.tokensDireita, this.formData.caseSensitive,  this.formData.ignorarTags, 
-                                          regexMarcacaoTempo, regexIdentificadorTempo, regexTag);
+                                          this.formData.ignorarTempo, regexMarcacaoTempo, regexIdentificadorTempoControle,
+                                          regexIdentificadorTempo, regexTag);
          
         this.linhasTabela = new MatTableDataSource<Contexto>(this.lines);
         this.linhasTabela.paginator = this.paginator;
@@ -134,16 +142,18 @@ export class LinesDisplayComponent implements OnInit{
 
   concordanciador(listaPalavras,termoBuscado:string[], esquerda:number, 
                   direita:number, caseSensitive:boolean, igonorarTags:boolean,
-                  regexMarcacaoTempo, regexIdentificadorTempo, regexTag){
+                  ignorarTempo:boolean, regexMarcacaoTempo, regexIdentificadorTempoControle, 
+                  regexIdentificadorTempo, regexTag){
     let linhasConcord=[];
     
     let indexBusca;
-    let tempoLegenda;
+    let tempoLegenda = '';
     let termoEncontrado;
     let contadorPalavras;
     let regexTeste;
     let regexIgnoreCaseFlag='';
     let textoEsquerda:string, textoDireita:string;
+    let estaNaMesmaLegenda = false; //true se ainda estamos na mesma legenda onde uma ocorrencia foi encontrada
     textoEsquerda = textoDireita = '';
 
     if(!caseSensitive)
@@ -155,17 +165,34 @@ export class LinesDisplayComponent implements OnInit{
       else
         regexTeste = new RegExp('^[!\\.,;\\:\\?\'\"]*' + termoBuscado[0] + '$', regexIgnoreCaseFlag);  
       
-      if(regexTeste.test(palavra)){
-        termoEncontrado = this.buscarTermo(listaPalavras, indice, termoBuscado, regexIgnoreCaseFlag);
+      palavra = palavra.replace(regexIdentificadorTempo, '');
+
+      if(palavra == this.stringLinhasEmBranco){
+        estaNaMesmaLegenda = false;
+        tempoLegenda = '';
+      }
+      else if(regexIdentificadorTempoControle.test(palavra) && regexMarcacaoTempo.test(palavra)){
+        tempoLegenda = palavra;
+        if(estaNaMesmaLegenda){
+          if(linhasConcord[linhasConcord.length-1].palavra_chave.time == ''){
+            linhasConcord[linhasConcord.length-1].palavra_chave.time = palavra;
+          }
+        }
+      }
+      else if(regexTeste.test(palavra)){
+        termoEncontrado = this.buscarTermo(listaPalavras, indice, termoBuscado, regexIgnoreCaseFlag, regexIdentificadorTempo);
         
         if(termoEncontrado != null){
           contadorPalavras = 0;
+          estaNaMesmaLegenda = true;
 
           for(indexBusca = indice-1; indexBusca >= 0 && contadorPalavras < esquerda; --indexBusca){
-            if(!(regexIdentificadorTempo.test(listaPalavras[indexBusca])) &&
+            if(!(regexIdentificadorTempoControle.test(listaPalavras[indexBusca])) &&
                listaPalavras[indexBusca] != this.stringLinhasEmBranco){
-              if(!regexTag.test(listaPalavras[indexBusca]) || !igonorarTags){
-                textoEsquerda = listaPalavras[indexBusca] + ' ' + textoEsquerda;
+              if((!regexTag.test(listaPalavras[indexBusca]) || !igonorarTags) &&
+                 (!regexIdentificadorTempo.test(listaPalavras[indexBusca]) || !ignorarTempo)){
+                textoEsquerda = listaPalavras[indexBusca].replace(regexIdentificadorTempo, '') + 
+                                ' ' + textoEsquerda;
                 ++contadorPalavras;
               }
             }
@@ -173,28 +200,34 @@ export class LinesDisplayComponent implements OnInit{
 
           contadorPalavras = 0;
           for(let i = indice + termoBuscado.length; i < listaPalavras.length && contadorPalavras < direita ;++i){
-            if(!regexIdentificadorTempo.test(listaPalavras[i]) &&
+            if(!regexIdentificadorTempoControle.test(listaPalavras[i]) &&
                listaPalavras[i] != this.stringLinhasEmBranco &&
-              (!regexTag.test(listaPalavras[i]) || !igonorarTags)){
-              textoDireita += listaPalavras[i] + ' ';
+              (!regexTag.test(listaPalavras[i]) || !igonorarTags) &&
+              (!regexIdentificadorTempo.test(listaPalavras[i]) || !ignorarTempo)){
+              textoDireita += listaPalavras[i].replace(regexIdentificadorTempo,'') + 
+                              ' ';
               ++contadorPalavras;
             }
           }
 
-          tempoLegenda = this.encontrarTempoLegenda(listaPalavras, indice, regexMarcacaoTempo, regexIdentificadorTempo);
+          //tempoLegenda = this.encontrarTempoLegenda(listaPalavras, indice, regexMarcacaoTempo, regexIdentificadorTempoControle);
           
           //console.log("Saiu");
           linhasConcord.push({contexto_esquerda: textoEsquerda.trim(), palavra_chave: {keyword:termoEncontrado, time:tempoLegenda}, contexto_direita: textoDireita.trim()});
           textoEsquerda = textoDireita = '';
         }
       }
+      
+      
     })
     return linhasConcord;
   }
 
-  buscarTermo(listaPalavras, indice, termoBuscado:string[], regexIgnoreCaseFlag){
+  buscarTermo(listaPalavras, indice, termoBuscado:string[], 
+              regexIgnoreCaseFlag, regexIdentificadorTempo){
     let termoEncontrado = null;
-    let palavra = listaPalavras[indice];
+    let palavraAtual;
+    let palavra = listaPalavras[indice].replace(regexIdentificadorTempo, '');
     
     if(termoBuscado.length == 1){
       termoEncontrado = palavra;
@@ -202,8 +235,9 @@ export class LinesDisplayComponent implements OnInit{
     else if(indice + termoBuscado.length <= listaPalavras.length){
       termoEncontrado = palavra;
       for(let i = 1; i < termoBuscado.length-1; ++i){
-        if(new RegExp('^'+termoBuscado[i], regexIgnoreCaseFlag).test(listaPalavras[indice+i])){
-          termoEncontrado += ' ' + listaPalavras[indice + i];
+        palavraAtual = listaPalavras[indice+i].replace(regexIdentificadorTempo, '');
+        if(new RegExp('^'+termoBuscado[i], regexIgnoreCaseFlag).test(palavraAtual)){
+          termoEncontrado += ' ' + palavraAtual;
         }
         else{
           termoEncontrado = null;
@@ -211,8 +245,9 @@ export class LinesDisplayComponent implements OnInit{
         }
       }
       if(termoEncontrado != null){
-        if(new RegExp('^'+termoBuscado[termoBuscado.length-1]+'[!\\.,;\\:\\?\"]?').test(listaPalavras[indice + termoBuscado.length-1])){
-          termoEncontrado += ' ' + listaPalavras[indice + termoBuscado.length-1];
+        palavraAtual = listaPalavras[indice + termoBuscado.length-1].replace(regexIdentificadorTempo, '');
+        if(new RegExp('^'+termoBuscado[termoBuscado.length-1]+'[!\\.,;\\:\\?\"]?').test(palavraAtual)){
+          termoEncontrado += ' ' + palavraAtual;
         }
         else{
           termoEncontrado = null;
@@ -223,38 +258,21 @@ export class LinesDisplayComponent implements OnInit{
     return termoEncontrado;
   }
 
-  encontrarTempoLegenda(listaPalavras, indice, regexMarcacaoTempo, regexIdentificadorTempo){
+ /*  encontrarTempoLegenda(listaPalavras, indice, regexMarcacaoTempo, regexIdentificadorTempoControle){
     //console.log("Entrou");
     for(let i = indice; i >=0 && listaPalavras[i] != this.stringLinhasEmBranco; --i){
-      if(regexIdentificadorTempo.test(listaPalavras[i]) && regexMarcacaoTempo.test(listaPalavras[i])){
+      if(regexIdentificadorTempoControle.test(listaPalavras[i]) && regexMarcacaoTempo.test(listaPalavras[i])){
         return listaPalavras[i];
       }
     }
 
     for(let i = indice; i < listaPalavras.length && listaPalavras[i] != this.stringLinhasEmBranco; ++i){
-      if(regexIdentificadorTempo.test(listaPalavras[i]) && regexMarcacaoTempo.test(listaPalavras[i])){
+      if(regexIdentificadorTempoControle.test(listaPalavras[i]) && regexMarcacaoTempo.test(listaPalavras[i])){
         return listaPalavras[i];
       }
     }
 
     return '';
-  }
-
- /*  tokenizar(texto:string){ 
-    let palavra = ''
-    for (let caractere of texto){
-      if(caractere.match(/^[a-z0-9]+$/i)) //é alfanumérico
-        palavra += caractere
-      else{
-        if(palavra.length > 0){
-          this.tokens.push(palavra)
-          palavra=''
-        }
-
-        if (!caractere.match(/[\s]/))
-          this.tokens.push(caractere)
-      }
-    }
   } */
 
   separarPalavras(texto:string){
@@ -278,9 +296,9 @@ export class LinesDisplayComponent implements OnInit{
     texto = texto
             .replace(regexTempo, 
                 (match, g1, g2, g3)=>match
-                                .replace(g1, marcacaoTempoAux + this.stringIdentficadorTempo + 
+                                .replace(g1, marcacaoTempoAux + this.stringIdentficadorTempoControle + 
                                              g1 + marcacaoTempoAux)
-                                .replace(g2, marcacaoTempoAux + this.stringIdentficadorTempo + g2)
+                                .replace(g2, marcacaoTempoAux + this.stringIdentficadorTempoControle + g2)
                                 .replace(g3, g3 + marcacaoTempoAux));
     //texto = texto.replace(regexTempoEtiquetado, (match, g1, g2)=>match.replace(g1, '\u26F7' + g1).replace(g2, g2 + '\u26F7'));
     console.log(texto);
