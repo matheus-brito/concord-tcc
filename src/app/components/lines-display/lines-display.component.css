@@ -30,6 +30,7 @@ table{
 #palavra-chave.mat-cell{
     text-align: center;
     cursor:pointer;
+    min-width:min-content;
 }
 
 .mat-header-cell{
