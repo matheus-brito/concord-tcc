@@ -1,7 +1,8 @@
 @import '~video.js/dist/video-js.css';
 
 h1#mensagemSemVideo{
-    margin-top: 5%;
+    margin-top: 1%;
+    text-align: center;
 }
 
 div#video-wrapper{
