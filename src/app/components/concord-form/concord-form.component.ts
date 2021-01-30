@@ -31,6 +31,8 @@ export class ConcordFormComponent implements OnInit {
     this.concordForm = this.formBuilder.group({
       arquivoURL:[this.uploadedText, null],
       arquivo:[null, [Validators.required, this.textExtensionValidator]],
+      arquivoTags:[null, [this.tagsFileExtensionValidator]],
+      arquivoTagsURL:[null, null],
       video:[null, [this.videoExtensionValidator]],
       videoData:[null, null],
       token:[null,[Validators.required]],
@@ -67,6 +69,18 @@ export class ConcordFormComponent implements OnInit {
       this.concordForm.controls.arquivoURL.setValue(null);
     }
     this.concordForm.controls.arquivo.touched = true;
+  }
+
+  onChangeUploadTagsFileButton(event){
+    if(event.target.files && event.target.files[0]){
+      this.concordForm.controls.arquivoTags.setValue(event.target.files[0].name);
+      this.concordForm.controls.arquivoTagsURL.setValue(event.srcElement.files[0]);
+    }
+    else{
+      this.concordForm.controls.arquivoTags.setValue(null);
+      this.concordForm.controls.arquivoTagsURL.setValue(null);
+    }
+    this.concordForm.controls.arquivoTags.touched = true;
   }
 
   onChangeSelectVideoButton(event){
@@ -115,5 +129,14 @@ export class ConcordFormComponent implements OnInit {
       return null;
     else
       return {'videoExtensionValidator':true};
+  }
+
+  tagsFileExtensionValidator(control:AbstractControl):{[key:string]:boolean}|null {
+    if(control.value == null)
+      return null;
+    else if(control.value.match(/^.*.(txt)$/))
+      return null;
+    else
+      return {'tagsFileExtensionValidator':true};
   }
 }
