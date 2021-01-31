@@ -53,7 +53,8 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
   ngOnChanges(changes){
 
     if((changes.tagsDistintas && !changes.tagsDistintas.firstChange) ||
-       (changes.legendas && !changes.legendas.firstChange)){
+       (changes.legendas && !changes.legendas.firstChange) ||
+       (changes.criarCategoriaOutros && !changes.criarCategoriaOutros.firstChange)){
       this.selectedTag = '';
       this.relacaoTags = {};
       this.filtroTabela.nativeElement.value = '';

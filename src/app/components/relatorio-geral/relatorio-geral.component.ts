@@ -38,7 +38,8 @@ export class RelatorioGeralComponent implements OnInit {
 
   ngOnChanges(changes){
 
-    if(changes.tagsDistintas && !changes.tagsDistintas.firstChange){
+    if((changes.tagsDistintas && !changes.tagsDistintas.firstChange) ||
+       (changes.criarCategoriaOutros && !changes.criarCategoriaOutros.firstChange)){
       this.filtroTabela.nativeElement.value = '';
       this.dataSourceTabelaDistintas = undefined;
       this.sort.active = this.sort.direction = '';
