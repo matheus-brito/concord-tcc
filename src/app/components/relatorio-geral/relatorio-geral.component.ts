@@ -21,8 +21,8 @@ export class RelatorioGeralComponent implements OnInit {
   @ViewChild('filtroTabela',{static:true}) filtroTabela;
   @ViewChild(MatSort) sort: MatSort;
 
+  @Input() criarCategoriaOutros;
   @Input() tagsDistintas;
-  @Input() legendas;
   @Input() regexTagGlobal;
   
   tagsDistintasGrafico = null;
@@ -38,7 +38,7 @@ export class RelatorioGeralComponent implements OnInit {
 
   ngOnChanges(changes){
 
-    if(changes.legendas && !changes.legendas.firstChange){
+    if(changes.tagsDistintas && !changes.tagsDistintas.firstChange){
       this.filtroTabela.nativeElement.value = '';
       this.dataSourceTabelaDistintas = undefined;
       this.sort.active = this.sort.direction = '';
@@ -121,7 +121,7 @@ export class RelatorioGeralComponent implements OnInit {
     totalOutros = 0;
 
     tags.forEach(tag => {
-      if(this.tagsDistintas[tag]/total >= 0.01){
+      if(!this.criarCategoriaOutros || this.tagsDistintas[tag]/total >= 0.01){
         labels.push(tag);
         dados.push(this.tagsDistintas[tag]);
         

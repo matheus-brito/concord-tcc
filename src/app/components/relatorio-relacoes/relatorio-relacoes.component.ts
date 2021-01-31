@@ -26,6 +26,7 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
   @Input() tagsDistintas;
   @Input() legendas;
   @Input() regexTagGlobal;
+  @Input() criarCategoriaOutros;
 
   selectedTag = '';
   
@@ -51,7 +52,8 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
 
   ngOnChanges(changes){
 
-    if(changes.legendas && !changes.legendas.firstChange){
+    if((changes.tagsDistintas && !changes.tagsDistintas.firstChange) ||
+       (changes.legendas && !changes.legendas.firstChange)){
       this.selectedTag = '';
       this.relacaoTags = {};
       this.filtroTabela.nativeElement.value = '';
@@ -119,6 +121,8 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
       if(regexSelectedTag.test(legenda)){
         tagsLegenda = legenda.match(regexTagGlobal);
 
+          tagsLegenda = this.filtrarTags(tagsLegenda);
+
           tagsLegenda.forEach(tag => {
             if(tag != this.selectedTag){
               if(novaRelacao.hasOwnProperty(tag)){
@@ -133,6 +137,17 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
     });
 
     this.relacaoTags[this.selectedTag] = novaRelacao;
+  }
+
+
+  filtrarTags(tagsLegenda){
+    if(tagsLegenda == null){
+      return [];
+    }
+
+    return tagsLegenda.filter(
+      (tag) => this.tagsDistintas.hasOwnProperty(tag)
+    );
   }
 
   onSelectedTagChange(valorSelecionado){
@@ -162,7 +177,7 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
     this.dataSourceTabelaRelacoes.paginator = this.paginator;
     this.numeroTagsRelacionadas = dados.length.toString();
 
-    console.log(this.relacoesSort)
+    //console.log(this.relacoesSort)
     this.dataSourceTabelaRelacoes.sort = this.relacoesSort;
   }
 
@@ -185,7 +200,7 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
 		  '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3', 
 		  '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'];
 
-    console.log(this.selectedTag);
+    //console.log(this.selectedTag);
     
     tagsAssociadas = Object.getOwnPropertyNames(this.relacaoTags[this.selectedTag]);
 
@@ -198,7 +213,7 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
     totalOutros = 0;
 
     tagsAssociadas.forEach(tag => {
-      if(this.relacaoTags[this.selectedTag][tag]/total >= 0.01){
+      if(!this.criarCategoriaOutros || this.relacaoTags[this.selectedTag][tag]/total >= 0.01){
         labels.push(tag);
         dados.push(this.relacaoTags[this.selectedTag][tag]);
         
