@@ -108,6 +108,7 @@ export class ConcordFormComponent implements OnInit {
     if(event.keyCode == 13){
       event.preventDefault();
       //console.log("Default prevenido!");
+      document.getElementById("submit-button").focus();
       document.getElementById("submit-button").click();
       return false;
     }
