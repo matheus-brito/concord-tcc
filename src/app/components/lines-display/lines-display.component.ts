@@ -43,7 +43,7 @@ export class LinesDisplayComponent implements OnInit{
 
   onPalavraChaveClick(tempoLegenda){
     let tempoInicio = this.buscarTempoInicio(tempoLegenda);
-    console.log(tempoInicio)
+    //console.log(tempoInicio)
     if(tempoInicio != ''){
       this.onKeywordClick.emit(this.converterParaSegundos(tempoInicio));
     }
@@ -54,7 +54,7 @@ export class LinesDisplayComponent implements OnInit{
     let segundos;
     segundos = Number(tempoAux[0])*(60**2) + Number(tempoAux[1])*60 + 
                Number(tempoAux[2]) + Number(tempoAux[3]/1000);
-    console.log(segundos)
+    //console.log(segundos)
     return segundos;
   }
 
@@ -88,7 +88,7 @@ export class LinesDisplayComponent implements OnInit{
         textoAux = this.stringLinhasEmBranco + ' ' + textoAux;
         let palavrasAux = this.isolarMarcacoesDeTempo(textoAux, regexMarcacaoTempoGlobal);
         this.palavras = [];
-        console.log(palavrasAux)
+        //console.log(palavrasAux)
         palavrasAux.forEach((texto, indice)=>{
             if(regexIdentificadorTempoControle.test(texto)){
               this.palavras.push(texto);
@@ -105,7 +105,7 @@ export class LinesDisplayComponent implements OnInit{
             }
         });
         this.palavras = this.palavras.filter((valor)=>!(regexStringVazia.test(valor)));
-        console.log(this.palavras)
+        //console.log(this.palavras)
         this.lines = this.concordanciador(this.palavras,this.separarPalavras(this.formData.token), this.formData.tokensEsquerda,
                                           this.formData.tokensDireita, this.formData.caseSensitive,  this.formData.ignorarTags, 
                                           this.formData.ignorarTempo, regexMarcacaoTempo, regexIdentificadorTempoControle,
@@ -119,7 +119,7 @@ export class LinesDisplayComponent implements OnInit{
         if(this.lines.length == 0){
           this.ocorrenciasEncontradas = false;
         }   
-        console.log(this.lines);
+        //console.log(this.lines);
       }
 
       readerTesteISO.onload = ()=>{
@@ -301,7 +301,7 @@ export class LinesDisplayComponent implements OnInit{
                                 .replace(g2, marcacaoTempoAux + this.stringIdentficadorTempoControle + g2)
                                 .replace(g3, g3 + marcacaoTempoAux));
     //texto = texto.replace(regexTempoEtiquetado, (match, g1, g2)=>match.replace(g1, '\u26F7' + g1).replace(g2, g2 + '\u26F7'));
-    console.log(texto);
+    //console.log(texto);
     return texto.split(new RegExp(marcacaoTempoAux));
   } 
 

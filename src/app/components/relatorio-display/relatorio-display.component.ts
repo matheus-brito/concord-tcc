@@ -62,14 +62,14 @@ export class RelatorioDisplayComponent implements OnInit {
         if(this.tags != null && this.tags.length > 0){
           this.tags.sort();
           this.tagsDistintas = this.obterTagsDistintas();
-          console.log(this.tagsDistintas)
+          //console.log(this.tagsDistintas)
           this.tagsDistintas  = this.filtrarTagsDistintas(this.tagsDistintas);
           
           if(Object.getOwnPropertyNames(this.tagsDistintas) != null &&
              Object.getOwnPropertyNames(this.tagsDistintas).length == 0){
               this.tagsEncontradas = false;
           }
-          console.log(this.tagsDistintas)
+          //console.log(this.tagsDistintas)
         }
         else{
           this.tagsEncontradas = false;
@@ -102,7 +102,7 @@ export class RelatorioDisplayComponent implements OnInit {
       let texto = reader.result;
       this.tagsParaFiltrar = (texto as string).split(/\r\n|\r|\n/); //separando por linhas
       this.tagsParaFiltrar = this.filtrarTagsValidasNoArquivo(this.tagsParaFiltrar);
-      console.log(this.tagsParaFiltrar)
+      //console.log(this.tagsParaFiltrar)
       this.processarArquivoTexto();
     }
 
@@ -127,7 +127,7 @@ export class RelatorioDisplayComponent implements OnInit {
   filtrarTagsDistintas(tagsDistintas){
     if(this.tagsParaFiltrar === null ||
       this.tagsParaFiltrar.length == 0){
-        console.log("Retornou mesmo objeto");
+        //console.log("Retornou mesmo objeto");
         return tagsDistintas;
     }
 
@@ -137,7 +137,7 @@ export class RelatorioDisplayComponent implements OnInit {
       }
     });
 
-    console.log(tagsDistintas);
+    //console.log(tagsDistintas);
 
     return tagsDistintas;
   }

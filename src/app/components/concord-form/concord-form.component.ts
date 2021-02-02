@@ -97,7 +97,7 @@ export class ConcordFormComponent implements OnInit {
   }
 
   onClickDeleteIcon(id:string){
-    console.log(id);
+    //console.log(id);
     let inputFile:HTMLInputElement = <HTMLInputElement>document.getElementById(id);
     let event = new Event('change');
     inputFile.value = null; 
