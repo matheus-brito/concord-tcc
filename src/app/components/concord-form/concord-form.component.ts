@@ -117,7 +117,7 @@ export class ConcordFormComponent implements OnInit {
   textExtensionValidator(control:AbstractControl):{[key:string]:boolean}|null {
     if(control.value == null)
       return null;
-    else if(control.value.match(/^.*.(txt|srt)$/))
+    else if(control.value.match(/^.*\.(?:txt|srt)$/))
       return null;
     else
       return {'textExtensionValidator':true};
@@ -126,7 +126,7 @@ export class ConcordFormComponent implements OnInit {
   videoExtensionValidator(control:AbstractControl):{[key:string]:boolean}|null {
     if(control.value == null)
       return null;
-    else if(control.value.match(/^.*.(mp4|webm)$/))
+    else if(control.value.match(/^.*\.mp4$/))
       return null;
     else
       return {'videoExtensionValidator':true};
@@ -135,7 +135,7 @@ export class ConcordFormComponent implements OnInit {
   tagsFileExtensionValidator(control:AbstractControl):{[key:string]:boolean}|null {
     if(control.value == null)
       return null;
-    else if(control.value.match(/^.*.(txt)$/))
+    else if(control.value.match(/^.*\.txt$/))
       return null;
     else
       return {'tagsFileExtensionValidator':true};

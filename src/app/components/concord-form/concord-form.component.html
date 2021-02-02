@@ -28,14 +28,15 @@
     </div>
     <div class="input-file">
         <button class="form-field" type="button" mat-raised-button (click)="videoInput.click()">Escolher Vídeo</button>
-        <input hidden (change)="onChangeSelectVideoButton($event)" #videoInput accept=".mp4,.webm" type="file" id="videoFile">
+        <input hidden (change)="onChangeSelectVideoButton($event)" #videoInput accept=".mp4" type="file" id="videoFile">
         <mat-form-field class="form-field">     
-            <mat-label>Vídeo (.mp4, .webm)</mat-label>
+            <mat-label>Vídeo (.mp4)</mat-label>
             <input matInput formControlName="video" readonly/>
             <mat-error *ngIf="concordForm.controls.video.touched && concordForm.controls.video.invalid">
                 <span *ngIf="concordForm.controls.video.errors.required">Campo Obrigatório</span>
                 <span *ngIf="concordForm.controls.video.errors.videoExtensionValidator">Tipo de Arquivo Inválido.</span>
             </mat-error>
+            <mat-hint>Codec de Vídeo: H.264 / Codec de Áudio: AAC</mat-hint>
         </mat-form-field>
         <mat-icon (click)="onClickDeleteIcon(videoInput.id)" class="delete-icon" svgIcon="xIcon"></mat-icon>
     </div>
