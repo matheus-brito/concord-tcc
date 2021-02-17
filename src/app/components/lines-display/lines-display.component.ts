@@ -77,7 +77,7 @@ export class LinesDisplayComponent implements OnInit{
         this.fileText = reader.result;
         let palavrasSeparadas;
         //let regexMarcacaoTempoEtiquetado = new RegExp(/^(\d{2})\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})$/);
-        let regexMarcacaoTempoGlobal = new RegExp(/\u26F8{2}\s*(?:<[^<>]+>\s*)*\s*([1-9]\d*\s*){0,1}\s*(?:<[^<>]+>\s*)*\s*(\d{2})\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
+        let regexMarcacaoTempoGlobal = new RegExp(/\u26F8{2}\s*(?:<[^<>]+>\s*)*\s*([1-9]\d*\s*){0,1}\s*(?:<[^<>]+>\s*)*\s*(\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}\:\d{2},\d{3})/g);
         let regexMarcacaoTempo = new RegExp(/\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/);
         //let regexMarcacaoTempoGlobal = new RegExp(/([1-9])\d*\s+\d{2}\:\d{2}\:\d{2},\d{3}\s*-->\s*\d{2}\:\d{2}(\:\d{2},\d{3})/g);
         let regexTag = new RegExp(/^<(?:[^\s<>]+\s*)+>$/);
@@ -295,11 +295,12 @@ export class LinesDisplayComponent implements OnInit{
     let marcacaoTempoAux = '\u26F7\u26F7';
     texto = texto
             .replace(regexTempo, 
-                (match, g1, g2, g3)=>match
+                (match, g1, g2)=>match
                                 .replace(g1, marcacaoTempoAux + this.stringIdentficadorTempoControle + 
                                              g1 + marcacaoTempoAux)
-                                .replace(g2, marcacaoTempoAux + this.stringIdentficadorTempoControle + g2)
-                                .replace(g3, g3 + marcacaoTempoAux));
+                                .replace(g2, marcacaoTempoAux + this.stringIdentficadorTempoControle + 
+                                            g2 + marcacaoTempoAux)
+            );
     //texto = texto.replace(regexTempoEtiquetado, (match, g1, g2)=>match.replace(g1, '\u26F7' + g1).replace(g2, g2 + '\u26F7'));
     //console.log(texto);
     return texto.split(new RegExp(marcacaoTempoAux));
