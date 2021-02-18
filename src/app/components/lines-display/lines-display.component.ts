@@ -276,12 +276,12 @@ export class LinesDisplayComponent implements OnInit{
   } */
 
   separarPalavras(texto:string){
-    let replacer1 = (match,g1)=>match.replace(g1, ' ' + g1);
-    let replacer2 = (match,g1)=>match.replace(g1, g1 + ' ');
+    let replacer1 = (match,g1)=>match.replace(g1, g1 + ' ');
+    let replacer2 = (match,g1)=>match.replace(g1, ' ' + g1);
     
     texto = texto.trim();
-    texto = texto.replace(/>([^\s]+)/g,replacer1);
-    texto = texto.replace(/([^\s]+)</g,replacer2);
+    texto = texto.replace(/(>)[^\s]/g,replacer1);
+    texto = texto.replace(/[^\s](<)/g,replacer2);
 
     return texto.split(/(?<!<[^<>]*)\s+|\s+(?![^<>]*>)/); //considera apenas espaços fora de tags
   }
