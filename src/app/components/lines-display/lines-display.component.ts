@@ -163,7 +163,7 @@ export class LinesDisplayComponent implements OnInit{
 
     listaPalavras.forEach((palavra,indice) => {
       if(termoBuscado.length == 1)
-        regexTeste = new RegExp('^[!\\.,;\\:\\?\'\"]*' + termoBuscado[0] + '[!\\.,;\\:\\?\"]?(\'\\w*)?$', regexIgnoreCaseFlag);
+        regexTeste = new RegExp('^[!\\.,;\\:\\?\'\"]*' + termoBuscado[0] + '[!\\.,;\\:\\?\"]*$', regexIgnoreCaseFlag);
       else
         regexTeste = new RegExp('^[!\\.,;\\:\\?\'\"]*' + termoBuscado[0] + '$', regexIgnoreCaseFlag);  
       
@@ -238,7 +238,7 @@ export class LinesDisplayComponent implements OnInit{
       termoEncontrado = palavra;
       for(let i = 1; i < termoBuscado.length-1; ++i){
         palavraAtual = listaPalavras[indice+i].replace(regexIdentificadorTempo, '');
-        if(new RegExp('^'+termoBuscado[i], regexIgnoreCaseFlag).test(palavraAtual)){
+        if(new RegExp('^'+termoBuscado[i]+'$', regexIgnoreCaseFlag).test(palavraAtual)){
           termoEncontrado += ' ' + palavraAtual;
         }
         else{
@@ -248,7 +248,7 @@ export class LinesDisplayComponent implements OnInit{
       }
       if(termoEncontrado != null){
         palavraAtual = listaPalavras[indice + termoBuscado.length-1].replace(regexIdentificadorTempo, '');
-        if(new RegExp('^'+termoBuscado[termoBuscado.length-1]+'[!\\.,;\\:\\?\"]?').test(palavraAtual)){
+        if(new RegExp('^'+termoBuscado[termoBuscado.length-1]+'[!\\.,;\\:\\?\"]*$').test(palavraAtual)){
           termoEncontrado += ' ' + palavraAtual;
         }
         else{
