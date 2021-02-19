@@ -140,7 +140,7 @@ export class LinesDisplayComponent implements OnInit{
     }
   }
 
-  concordanciador(listaPalavras,termoBuscado:string[], esquerda:number, 
+  concordanciador(listaPalavras,termoBuscadoOriginal:string[], esquerda:number, 
                   direita:number, caseSensitive:boolean, igonorarTags:boolean,
                   ignorarTempo:boolean, regexMarcacaoTempo, regexIdentificadorTempoControle, 
                   regexIdentificadorTempo, regexTag){
@@ -159,6 +159,8 @@ export class LinesDisplayComponent implements OnInit{
     if(!caseSensitive)
       regexIgnoreCaseFlag = 'i';
     
+    let termoBuscado = this.escaparTermoBuscado(termoBuscadoOriginal);
+
     listaPalavras.forEach((palavra,indice) => {
       if(termoBuscado.length == 1)
         regexTeste = new RegExp('^[!\\.,;\\:\\?\'\"]*' + termoBuscado[0] + '[!\\.,;\\:\\?\"]?(\'\\w*)?$', regexIgnoreCaseFlag);
@@ -306,6 +308,13 @@ export class LinesDisplayComponent implements OnInit{
     return texto.split(new RegExp(marcacaoTempoAux));
   } 
 
+  escaparTermoBuscado (termoBuscado:string[]):string[] {
+    return termoBuscado.map(this.escapeRegExp);
+  }
+
+  escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+  }
 }
 
 export interface Contexto {
