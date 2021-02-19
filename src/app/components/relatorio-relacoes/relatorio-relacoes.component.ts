@@ -107,7 +107,7 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
   }
 
   atualizarObjetosRelacoes(regexTagGlobal){
-    let regexSelectedTag = new RegExp(this.selectedTag); 
+    let regexSelectedTag = new RegExp(this.escapeRegExp(this.selectedTag)); 
     let tagsLegenda;
     let novaRelacao = {};
     //let relacoes = this.construirMatrizRelacoes();
@@ -180,6 +180,10 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
 
     //console.log(this.relacoesSort)
     this.dataSourceTabelaRelacoes.sort = this.relacoesSort;
+  }
+
+  escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 
   montarDadosGraficoRelacoes(){
