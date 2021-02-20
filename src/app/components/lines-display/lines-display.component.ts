@@ -24,6 +24,7 @@ export class LinesDisplayComponent implements OnInit{
   stringLinhasEmBranco = '\u26F8\u26F8';
   stringIdentficadorTempoControle = '\u2711\u2711';
   stringIdentficadorTempo = '\u26F2\u26F2';
+  stringPontuacao = '[!\\.,;\\:\\?\'\"_\\-\\(\\)\\{\\}\\[\\]<>]*';
   defaultPageSize = 10;
   ocorrenciasEncontradas = true;
 
@@ -163,9 +164,9 @@ export class LinesDisplayComponent implements OnInit{
 
     listaPalavras.forEach((palavra,indice) => {
       if(termoBuscado.length == 1)
-        regexTeste = new RegExp('^[!\\.,;\\:\\?\'\"]*' + termoBuscado[0] + '[!\\.,;\\:\\?\"]*$', regexIgnoreCaseFlag);
+        regexTeste = new RegExp('^' + this.stringPontuacao + termoBuscado[0] + this.stringPontuacao +'$', regexIgnoreCaseFlag);
       else
-        regexTeste = new RegExp('^[!\\.,;\\:\\?\'\"]*' + termoBuscado[0] + '$', regexIgnoreCaseFlag);  
+        regexTeste = new RegExp('^' + this.stringPontuacao + termoBuscado[0] + '$', regexIgnoreCaseFlag);  
       
       palavra = palavra.replace(regexIdentificadorTempo, '');
 
@@ -248,7 +249,7 @@ export class LinesDisplayComponent implements OnInit{
       }
       if(termoEncontrado != null){
         palavraAtual = listaPalavras[indice + termoBuscado.length-1].replace(regexIdentificadorTempo, '');
-        if(new RegExp('^'+termoBuscado[termoBuscado.length-1]+'[!\\.,;\\:\\?\"]*$').test(palavraAtual)){
+        if(new RegExp('^'+termoBuscado[termoBuscado.length-1]+ this.stringPontuacao +'$').test(palavraAtual)){
           termoEncontrado += ' ' + palavraAtual;
         }
         else{
