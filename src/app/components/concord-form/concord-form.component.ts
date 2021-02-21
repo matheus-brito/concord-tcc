@@ -1,8 +1,17 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import {FormGroup, FormBuilder, Validators, AbstractControl} from '@angular/forms';
+import {FormGroup, NgForm, FormGroupDirective, FormControl, FormBuilder, Validators, AbstractControl} from '@angular/forms';
 import {DomSanitizer} from '@angular/platform-browser';
 import {MatIconRegistry} from '@angular/material/icon';
 import { Router } from '@angular/router';
+import { ErrorStateMatcher } from '@angular/material/core';
+
+/** Erro do formulário */
+class numTokensErrorMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    let token = control.parent.get('token');
+    return form.hasError('numTokens');
+  }
+}
 
 @Component({
   selector: 'app-concord-form', 
@@ -16,8 +25,8 @@ export class ConcordFormComponent implements OnInit {
 
   concordForm;
   uploadedText;
-  teste; teste2;
-
+  numTokensErrorMatcher = new numTokensErrorMatcher();
+  
   constructor(private formBuilder: FormBuilder, 
               private iconRegistry: MatIconRegistry, 
               private router: Router,
@@ -36,11 +45,14 @@ export class ConcordFormComponent implements OnInit {
       video:[null, [this.videoExtensionValidator]],
       videoData:[null, null],
       token:[null,null],
-      tokensEsquerda:[10,[Validators.required, Validators.min(1)]],
-      tokensDireita:[10,[Validators.required,Validators.min(1)]],
+      tokensEsquerda:[10, null],
+      tokensDireita:[10, null],
       caseSensitive: [false, null],
       ignorarTags:[false, null],
       ignorarTempo:[true, null]
+    },
+    {
+      validators: [this.numTokensValidator]
     });
   }
 
@@ -139,5 +151,19 @@ export class ConcordFormComponent implements OnInit {
       return null;
     else
       return {'tagsFileExtensionValidator':true};
+  }
+
+  numTokensValidator(formGroup: FormGroup) {
+    let token = formGroup.get('token');
+    if (token.value) {
+      let tokensEsquerda = formGroup.get('tokensEsquerda');
+      let tokensDireita = formGroup.get('tokensDireita');
+      
+      if(!tokensEsquerda.value || !tokensDireita.value){
+        return { numTokens: true }
+      }
+      return null;
+    }
+    return null;
   }
 }

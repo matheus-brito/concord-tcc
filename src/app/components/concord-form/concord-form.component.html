@@ -47,18 +47,16 @@
     <div class="number-selectors">
     <mat-form-field class="form-field">
         <mat-label>Tokens à Esquerda</mat-label>
-        <input matInput type="number" min="1" formControlName="tokensEsquerda"/>
-        <mat-error *ngIf="concordForm.controls.tokensEsquerda.touched && concordForm.controls.tokensEsquerda.invalid">
-            <span *ngIf="concordForm.controls.tokensEsquerda.errors.required">Campo Obrigatório</span>
-            <span *ngIf="concordForm.controls.tokensEsquerda.errors.min">Valor deve ser maior ou igual a {{ concordForm.controls.tokensEsquerda.errors.min.min }} </span>
+        <input matInput type="number" min="1" formControlName="tokensEsquerda" [errorStateMatcher]="numTokensErrorMatcher"/>
+        <mat-error *ngIf="concordForm.hasError('numTokens')">
+            Campo deve ser maior ou igual a 1. 
         </mat-error>
     </mat-form-field>
     <mat-form-field class="form-field number-selector">
         <mat-label>Tokens à Direita</mat-label>
-        <input matInput type="number" min="1" formControlName="tokensDireita"/>
-        <mat-error *ngIf="concordForm.controls.tokensDireita.touched && concordForm.controls.tokensDireita.invalid">
-            <span *ngIf="concordForm.controls.tokensDireita.errors.required">Campo Obrigatório</span>
-            <span *ngIf="concordForm.controls.tokensDireita.errors.min">Valor deve ser maior ou igual a {{ concordForm.controls.tokensDireita.errors.min.min }} </span>
+        <input matInput type="number" min="1" formControlName="tokensDireita" [errorStateMatcher]="numTokensErrorMatcher"/>
+        <mat-error *ngIf="concordForm.hasError('numTokens')">
+            Campo deve ser maior ou igual a 1. 
         </mat-error>
     </mat-form-field>
     </div>
