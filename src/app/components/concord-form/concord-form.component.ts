@@ -35,7 +35,7 @@ export class ConcordFormComponent implements OnInit {
       arquivoTagsURL:[null, null],
       video:[null, [this.videoExtensionValidator]],
       videoData:[null, null],
-      token:[null,[Validators.required]],
+      token:[null,null],
       tokensEsquerda:[10,[Validators.required, Validators.min(1)]],
       tokensDireita:[10,[Validators.required,Validators.min(1)]],
       caseSensitive: [false, null],

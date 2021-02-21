@@ -20,6 +20,7 @@ export class LinesDisplayComponent implements OnInit{
   colunasTabela: string[] = ['contexto_esquerda', 'palavra_chave', 'contexto_direita'];
   linhasTabela;// = new MatTableDataSource<PeriodicElement>([{position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'}]);
   fileText;
+  formularioContemPalavraChave = true;
   palavras = [];
   stringLinhasEmBranco = '\u26F8\u26F8';
   stringIdentficadorTempoControle = '\u2711\u2711';
@@ -31,14 +32,24 @@ export class LinesDisplayComponent implements OnInit{
   constructor() {}
 
   ngOnInit(){
-    this.processarDadosFormulario();
+    if(this.formData.token){
+      this.formularioContemPalavraChave = true;
+      this.processarDadosFormulario();
+    } else{
+      this.formularioContemPalavraChave = false;
+    }
   }
 
   ngOnChanges(changes){
     if(changes.formData && !changes.formData.firstChange){
-      this.ocorrenciasEncontradas = true;
-
-      this.processarDadosFormulario();
+      if(this.formData.token){
+        this.ocorrenciasEncontradas = true; //resetando boolean
+        
+        this.formularioContemPalavraChave = true;
+        this.processarDadosFormulario();
+      } else{
+        this.formularioContemPalavraChave = false;
+      }
     }
   }
 

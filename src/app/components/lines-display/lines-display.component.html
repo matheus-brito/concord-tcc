@@ -2,8 +2,9 @@
     <pre class="lineItem" *ngFor="let line of lines" [innerHTML]="line">
     </pre>
 </div> -->
-<h1 id = "mensagemNenhumaOcorrenciaEncontrada" *ngIf="!ocorrenciasEncontradas">Nenhuma Ocorrência Encontrada. :(</h1>
-<div *ngIf="ocorrenciasEncontradas" class="mat-elevation-z8 display-area">
+<h1 id = "mensagemNenhumaOcorrenciaEncontrada" *ngIf="!formularioContemPalavraChave">Nenhum Texto ou Etiqueta Informada na Aba Opções. :(</h1>
+<h1 id = "mensagemNenhumaOcorrenciaEncontrada" *ngIf="formularioContemPalavraChave && !ocorrenciasEncontradas">Nenhuma Ocorrência Encontrada. :(</h1>
+<div *ngIf="formularioContemPalavraChave && ocorrenciasEncontradas" class="mat-elevation-z8 display-area">
     <table id="tabela-contexto" mat-table [dataSource]="linhasTabela">
   
       <!-- Contexto à Esquerda  -->

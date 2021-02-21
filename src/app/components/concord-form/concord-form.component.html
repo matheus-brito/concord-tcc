@@ -43,9 +43,6 @@
     <mat-form-field class="form-field">
         <mat-label>Palavra ou Etiqueta a Buscar</mat-label>
         <input matInput formControlName="token"/>
-        <mat-error *ngIf="concordForm.controls.token.touched && concordForm.controls.token.invalid">
-            <span *ngIf="concordForm.controls.token.errors.required">Campo Obrigatório</span>
-        </mat-error>
     </mat-form-field>
     <div class="number-selectors">
     <mat-form-field class="form-field">
