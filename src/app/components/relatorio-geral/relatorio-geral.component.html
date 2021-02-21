@@ -1,19 +1,19 @@
 <div class="outer-container">
-    <h2>Relatório Geral de Tags</h2>
+    <h2>Relatório Geral de Etiquetas</h2>
     <div id="totalTagsDistintas">
-        <h4>Número de Tags Distintas: {{ dataSourceTabelaDistintas.data.length }}</h4>
+        <h4>Número de Etiquetas Distintas: {{ dataSourceTabelaDistintas.data.length }}</h4>
     </div>
     <div class="table-container">
         <mat-form-field id="filtroTabelaDistintas">
             <mat-label>Filtro para Tabela</mat-label>
-            <input #filtroTabela matInput (keyup)="applyFilter($event)" placeholder="Ex.: <Tag_Buscada>" #input>
+            <input #filtroTabela matInput (keyup)="applyFilter($event)" placeholder="Ex.: <Etiqueta_Buscada>" #input>
         </mat-form-field>
         <div class="mat-elevation-z8">
             <table #elemTabelaDistintas mat-table [dataSource]="dataSourceTabelaDistintas" matSort>
                 
                 <!-- Position Column -->
                 <ng-container matColumnDef="tag">
-                    <th mat-header-cell *matHeaderCellDef> Tag </th>
+                    <th mat-header-cell *matHeaderCellDef> Etiqueta </th>
                     <td mat-cell *matCellDef="let element"> {{element.tag}} </td>
                     <td mat-footer-cell *matFooterCellDef> Total (Todas as Páginas) </td>
                 </ng-container>
@@ -31,7 +31,7 @@
                 
                 <!-- Row shown when there is no matching data. -->
                 <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell" colspan="4">Tag "{{input.value}}" não encontrada.</td>
+                    <td class="mat-cell" colspan="4">Etiqueta "{{input.value}}" não encontrada.</td>
                 </tr>
             </table>
             <mat-paginator #paginatorTabelaDistintas

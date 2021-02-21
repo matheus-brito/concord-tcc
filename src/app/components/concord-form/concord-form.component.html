@@ -14,15 +14,15 @@
         <mat-icon (click)="onClickDeleteIcon(fileInput.id);" class="delete-icon" svgIcon="xIcon"></mat-icon>
     </div>
     <div class="input-file">
-        <button class="form-field" type="button" mat-raised-button (click)="tagsFileInput.click()">Escolher Arquivo de Tags</button>
+        <button class="form-field" type="button" mat-raised-button (click)="tagsFileInput.click()">Arquivo de Etiquetas</button>
         <input hidden (change)="onChangeUploadTagsFileButton($event)" #tagsFileInput type="file" id="tagFile"/>
         <mat-form-field class="form-field">     
-            <mat-label>Arquivo de Tags (.txt)</mat-label>
+            <mat-label>Arquivo de Etiquetas (.txt)</mat-label>
             <input #tagsFileNameField  id="tagFileName" matInput accept=".txt" formControlName="arquivoTags" readonly/>
             <mat-error *ngIf="concordForm.controls.arquivoTags.touched && concordForm.controls.arquivoTags.invalid">
                 <span *ngIf="concordForm.controls.arquivoTags.errors.tagsFileExtensionValidator">Tipo de Arquivo Inválido.</span>
             </mat-error>
-            <mat-hint>Tags a considerar no Relatório.</mat-hint>
+            <mat-hint>Etiquetas a considerar no Relatório.</mat-hint>
         </mat-form-field>
         <mat-icon (click)="onClickDeleteIcon(tagsFileInput.id);" class="delete-icon" svgIcon="xIcon"></mat-icon>
     </div>
@@ -41,7 +41,7 @@
         <mat-icon (click)="onClickDeleteIcon(videoInput.id)" class="delete-icon" svgIcon="xIcon"></mat-icon>
     </div>
     <mat-form-field class="form-field">
-        <mat-label>Token a Buscar</mat-label>
+        <mat-label>Palavra ou Etiqueta a Buscar</mat-label>
         <input matInput formControlName="token"/>
         <mat-error *ngIf="concordForm.controls.token.touched && concordForm.controls.token.invalid">
             <span *ngIf="concordForm.controls.token.errors.required">Campo Obrigatório</span>

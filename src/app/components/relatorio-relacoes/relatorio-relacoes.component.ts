@@ -268,7 +268,7 @@ export class RelatorioRelacoesComponent implements OnInit, AfterViewInit {
         options: {
           title: {
             display: true,
-            text: 'Tags Relacionadas a ' + this.selectedTag
+            text: 'Etiquetas Relacionadas a ' + this.selectedTag
           },
           plugins: {
             labels: {

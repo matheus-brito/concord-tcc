@@ -9,7 +9,7 @@
                               (onInvalidSubmit)="hideTabs()">
             </app-concord-form>
         </mat-tab>
-        <mat-tab *ngIf="tabsVisible" label="Linhas De Corcondância">
+        <mat-tab *ngIf="tabsVisible" label="Linhas de Concordância">
             <app-lines-display [formData]="formData"
                                (onKeywordClick)="changeVideoTime($event)">
             </app-lines-display>
@@ -25,7 +25,7 @@
                                (onTimeChange)="onVideoTimeChange()">
             </app-video-display>
         </mat-tab>
-        <mat-tab *ngIf="tabsVisible" label="Relatório de Tags">
+        <mat-tab *ngIf="tabsVisible" label="Relatório de Etiquetas">
             <app-relatorio-display [formData]="formData">
             </app-relatorio-display>
         </mat-tab>

@@ -172,7 +172,7 @@ export class RelatorioGeralComponent implements OnInit {
         options: {
           title: {
             display: true,
-            text: 'Tags Presentes no Arquivo'
+            text: 'Etiquetas Presentes no Arquivo'
           },
           plugins: {
             labels: {
