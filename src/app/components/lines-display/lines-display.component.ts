@@ -53,31 +53,8 @@ export class LinesDisplayComponent implements OnInit{
     }
   }
 
-  onPalavraChaveClick(tempoLegenda){
-    let tempoInicio = this.buscarTempoInicio(tempoLegenda);
-    //console.log(tempoInicio)
-    if(tempoInicio != ''){
-      this.onKeywordClick.emit(this.converterParaSegundos(tempoInicio));
-    }
-  }
-
-  converterParaSegundos(tempo){
-    let tempoAux = tempo.replace(/,/, '\:').split(/\:/);
-    let segundos;
-    segundos = Number(tempoAux[0])*(60**2) + Number(tempoAux[1])*60 + 
-               Number(tempoAux[2]) + Number(tempoAux[3]/1000);
-    //console.log(segundos)
-    return segundos;
-  }
-
-  buscarTempoInicio(tempoLegenda:string){
-    let regex = new RegExp(/(?<tempoInicio>\d{2}\:\d{2}\:\d{2},\d{3})\s*-->/);
-    let resultado;
-    resultado = tempoLegenda.match(regex)
-    if(resultado)
-      return resultado.groups.tempoInicio;
-    else
-      return '';
+  onPalavraChaveClick(textoClicado){
+    this.onKeywordClick.emit(textoClicado);
   }
 
   processarDadosFormulario(){
@@ -185,54 +162,56 @@ export class LinesDisplayComponent implements OnInit{
         estaNaMesmaLegenda = false;
         tempoLegenda = '';
       }
-      else if(regexIdentificadorTempoControle.test(palavra) && regexMarcacaoTempo.test(palavra)){
-        tempoLegenda = palavra;
-        if(estaNaMesmaLegenda){
-          if(linhasConcord[linhasConcord.length-1].palavra_chave.time == ''){
-            linhasConcord[linhasConcord.length-1].palavra_chave.time = palavra;
+      else if(regexIdentificadorTempoControle.test(palavra)){
+        if(regexMarcacaoTempo.test(palavra)){
+          tempoLegenda = palavra;
+          if(estaNaMesmaLegenda){
+            if(linhasConcord[linhasConcord.length-1].palavra_chave.time == ''){
+              linhasConcord[linhasConcord.length-1].palavra_chave.time = palavra;
+            }
           }
         }
       }
-      else if(regexTeste.test(palavra)){
-        termoEncontrado = this.buscarTermo(listaPalavras, indice, termoBuscado, regexIgnoreCaseFlag, regexIdentificadorTempo);
-        
-        if(termoEncontrado != null){
-          contadorPalavras = 0;
-          estaNaMesmaLegenda = true;
+      else{
+        if(regexTeste.test(palavra)){
+          termoEncontrado = this.buscarTermo(listaPalavras, indice, termoBuscado, regexIgnoreCaseFlag, regexIdentificadorTempo);
+          
+          if(termoEncontrado != null){
+            contadorPalavras = 0;
+            estaNaMesmaLegenda = true;
 
-          for(indexBusca = indice-1; indexBusca >= 0 && contadorPalavras < esquerda; --indexBusca){
-            if(!(regexIdentificadorTempoControle.test(listaPalavras[indexBusca])) &&
-               listaPalavras[indexBusca] != this.stringLinhasEmBranco){
-              if((!regexTag.test(listaPalavras[indexBusca]) || !igonorarTags) &&
-                 (!regexIdentificadorTempo.test(listaPalavras[indexBusca]) || !ignorarTempo)){
-                textoEsquerda = listaPalavras[indexBusca].replace(regexIdentificadorTempo, '') + 
-                                ' ' + textoEsquerda;
+            for(indexBusca = indice-1; indexBusca >= 0 && contadorPalavras < esquerda; --indexBusca){
+              if(!(regexIdentificadorTempoControle.test(listaPalavras[indexBusca])) &&
+                listaPalavras[indexBusca] != this.stringLinhasEmBranco){
+                if((!regexTag.test(listaPalavras[indexBusca]) || !igonorarTags) &&
+                  (!regexIdentificadorTempo.test(listaPalavras[indexBusca]) || !ignorarTempo)){
+                  textoEsquerda = listaPalavras[indexBusca].replace(regexIdentificadorTempo, '') + 
+                                  ' ' + textoEsquerda;
+                  ++contadorPalavras;
+                }
+              }
+            }
+
+            contadorPalavras = 0;
+            for(let i = indice + termoBuscado.length; i < listaPalavras.length && contadorPalavras < direita ;++i){
+              if(!regexIdentificadorTempoControle.test(listaPalavras[i]) &&
+                listaPalavras[i] != this.stringLinhasEmBranco &&
+                (!regexTag.test(listaPalavras[i]) || !igonorarTags) &&
+                (!regexIdentificadorTempo.test(listaPalavras[i]) || !ignorarTempo)){
+                textoDireita += listaPalavras[i].replace(regexIdentificadorTempo,'') + 
+                                ' ';
                 ++contadorPalavras;
               }
             }
-          }
 
-          contadorPalavras = 0;
-          for(let i = indice + termoBuscado.length; i < listaPalavras.length && contadorPalavras < direita ;++i){
-            if(!regexIdentificadorTempoControle.test(listaPalavras[i]) &&
-               listaPalavras[i] != this.stringLinhasEmBranco &&
-              (!regexTag.test(listaPalavras[i]) || !igonorarTags) &&
-              (!regexIdentificadorTempo.test(listaPalavras[i]) || !ignorarTempo)){
-              textoDireita += listaPalavras[i].replace(regexIdentificadorTempo,'') + 
-                              ' ';
-              ++contadorPalavras;
-            }
+            //tempoLegenda = this.encontrarTempoLegenda(listaPalavras, indice, regexMarcacaoTempo, regexIdentificadorTempoControle);
+            
+            //console.log("Saiu");
+            linhasConcord.push({contexto_esquerda: textoEsquerda.trim(), palavra_chave: {keyword:termoEncontrado, time:tempoLegenda, indice: linhasConcord.length}, contexto_direita: textoDireita.trim()});
+            textoEsquerda = textoDireita = '';
           }
-
-          //tempoLegenda = this.encontrarTempoLegenda(listaPalavras, indice, regexMarcacaoTempo, regexIdentificadorTempoControle);
-          
-          //console.log("Saiu");
-          linhasConcord.push({contexto_esquerda: textoEsquerda.trim(), palavra_chave: {keyword:termoEncontrado, time:tempoLegenda}, contexto_direita: textoDireita.trim()});
-          textoEsquerda = textoDireita = '';
         }
       }
-      
-      
     })
     return linhasConcord;
   }

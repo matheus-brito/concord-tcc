@@ -3,7 +3,7 @@
         <img id="logo" src="../assets/img/CS4.png"/>
         <span id="navbar-title">Concord4Subs</span>
     </mat-toolbar>
-    <mat-tab-group #tabs mat-align-tabs="center">
+    <mat-tab-group #tabs mat-align-tabs="center" (selectedTabChange)="onTabChange($event)">
         <mat-tab label="Opções">
             <app-concord-form (onValidSubmit)="updateTabs()"
                               (onInvalidSubmit)="hideTabs()">
@@ -11,11 +11,13 @@
         </mat-tab>
         <mat-tab *ngIf="tabsVisible" label="Linhas de Concordância">
             <app-lines-display [formData]="formData"
-                               (onKeywordClick)="changeVideoTime($event)">
+                               (onKeywordClick)="onTextoClicado($event)">
             </app-lines-display>
         </mat-tab>
         <mat-tab *ngIf="tabsVisible" label="Arquivo Original">
-            <app-arquivo-original [formData]="formData">
+            <app-arquivo-original [formData]="formData"
+                                  [textoClicado]="textoClicado"
+                                  [tabSelecionada]="tabArquivoOriginalSelecionada">
             </app-arquivo-original>
         </mat-tab>
         <mat-tab *ngIf="tabsVisible" label="Vídeo">
