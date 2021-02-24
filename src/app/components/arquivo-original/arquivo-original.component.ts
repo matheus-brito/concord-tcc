@@ -12,7 +12,6 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
   @Input() tabSelecionada;
   @Input() formData;
   @Input() textoClicado;
-  fileText;
   scrollTop;
   selectionStart;
   selectionEnd;
@@ -33,7 +32,7 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
     if(changes.formData && !changes.formData.firstChange){
       this.lerTexto();
       this.textoClicado = null;
-      this.selectionStart = this.selectionEnd = 0; 
+      this.selectionStart = this.selectionEnd = this.scrollTop = 0; 
     }
 
     if(changes.textoClicado && !changes.textoClicado.firstChange){
@@ -61,6 +60,8 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
 
   destacarTexto(){
     //console.log("destacando")
+    this.textArea.nativeElement.blur();
+    this.textArea.nativeElement.focus();
     this.rolarParaAreaSelecionada();
     this.textArea.nativeElement.focus();
     this.textArea.nativeElement.setSelectionRange(this.selectionStart, this.selectionEnd);
@@ -72,7 +73,7 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
       let readerTesteISO = new FileReader();
       
       reader.onload = () => {
-        this.fileText = reader.result;
+        this.textArea.nativeElement.value = reader.result;
       }
 
       readerTesteISO.onload = ()=>{
@@ -96,8 +97,6 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
   rolarParaAreaSelecionada() {
     const fullText = this.textArea.nativeElement.value;
 
-    this.textArea.nativeElement.focus();
-
     //preencher com a substring, rolar até o final, depois voltar para o texto original
     this.textArea.nativeElement.value = fullText.substring(0, this.selectionEnd);
     this.textArea.nativeElement.scrollTop = this.textArea.nativeElement.scrollHeight;
@@ -112,6 +111,7 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
     let arrayMatches = Array.from(matches);
 
     if(!arrayMatches){
+      alert("Ocorrência não encontrada. Verifique se digitou o texto corretamente na busca.");
       return;
     }
 
