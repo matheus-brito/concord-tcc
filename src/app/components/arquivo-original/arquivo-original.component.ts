@@ -111,7 +111,11 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
 
     let arrayMatches = Array.from(matches);
 
-    let ocorrenciaEncontrada = arrayMatches[this.textoClicado.indice];
+    if(!arrayMatches){
+      return;
+    }
+
+    let ocorrenciaEncontrada = arrayMatches[this.textoClicado.dados.indice];
 
     let indiceInicio = ocorrenciaEncontrada['index'];
 
@@ -122,19 +126,38 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
   }
 
   gerarRegexBusca() {
-    let stringPontuacao = '[!\\.,;\\:\\?\'\"_\\-\\(\\)\\{\\}\\[\\]<>]*';
-    let stringTags = '(?:<[^<>]+>)*';
-    let stringAntesToken = `(?<=(?:^|\\s)${stringTags}${stringPontuacao})`;
-    let stringDepoisToken = `(?=${stringPontuacao}${stringTags}(?:$|\\s))`;
-    
-    let tokenSeparadoPorEspacos = this.formData.token.replace(/\s+/g, ' ');
-    let tokenFormatado = this.escapeRegExp(tokenSeparadoPorEspacos);
-
     let flags = this.formData.caseSensitive?  'gm': 'gmi';
 
-    let regexBuscaPorToken = new RegExp(stringAntesToken + tokenFormatado + stringDepoisToken, flags) 
+    let stringRegex = this.gerarStringRegex();
+    
+    //console.log(stringRegex)
+    let regexBuscaPorToken = new RegExp(stringRegex, flags) 
     
     return regexBuscaPorToken;
+  }
+
+  gerarStringRegex() {
+    let regexComecaComTag = new RegExp(/^<.*>.*$/);
+    let regexTerminaComTag = new RegExp(/^.*<.*>$/);
+
+    let stringPontuacao = '[!\\.,;\\:\\?\'\"_\\-\\(\\)\\{\\}\\[\\]<>]*';
+    let stringTags = '(?:<[^<>]+>)*';
+    let stringAntesToken = '';
+    let stringDepoisToken = '';
+
+    let token = this.formData.token.trim();
+    
+    if(!regexComecaComTag.test(token)){
+      stringAntesToken = `(?<=(?:^|\\s)${stringTags}${stringPontuacao})`;
+    }
+
+    if(!regexTerminaComTag.test(token)){
+      stringDepoisToken = `(?=${stringPontuacao}${stringTags}(?:$|\\s))`;
+    }
+
+    let tokenFormatado = this.escapeRegExp(token);
+
+    return stringAntesToken + tokenFormatado + stringDepoisToken;
   }
 
   escapeRegExp(string) {

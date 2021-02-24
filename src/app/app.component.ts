@@ -51,7 +51,7 @@ export class AppComponent{
 
   onTextoClicado(textoClicado) {
     //console.log(tempoInicio)
-    this.textoClicado = textoClicado;
+    this.textoClicado = {dados: textoClicado};
     
     if(this.formData.videoData){
       let tempoInicio = this.buscarTempoInicio(textoClicado.time);
