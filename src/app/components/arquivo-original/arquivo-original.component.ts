@@ -122,7 +122,7 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
     let arrayMatches = Array.from(matches);
 
     if(!arrayMatches || arrayMatches.length <= this.textoClicado.dados.indice){
-      alert("Ocorrência não encontrada. Verifique se digitou o texto corretamente na busca.");
+      alert("Ocorrência não encontrada. Verifique se digitou o texto corretamente na busca. As etiquetas e palavras devem estar escritas por completo.");
       return;
     }
 
@@ -151,22 +151,22 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
   }
 
   gerarStringRegex() {
-    let regexComecaComTag = new RegExp(/^<.*>.*$/);
-    let regexTerminaComTag = new RegExp(/^.*<.*>$/);
+    let tokenComecaComTag = new RegExp(/^<.*>.*$/);
+    let tokenTerminaComTag = new RegExp(/^.*<.*>$/);
 
     let stringPontuacao = '[!\\.,;\\:\\?\'\"_\\-\\(\\)\\{\\}\\[\\]<>]*';
-    let stringTags = '(?:<[^<>]+>)*';
+    let stringTags = '(?:<[^<>]+>)';
     let stringAntesToken = '';
     let stringDepoisToken = '';
 
     let token = this.formData.token.trim();
     
-    if(!regexComecaComTag.test(token)){
-      stringAntesToken = `(?<=(?:^|\\s)${stringTags}${stringPontuacao})`;
+    if(!tokenComecaComTag.test(token)){
+      stringAntesToken = `(?<=(?:^|\\s|${stringTags}))${stringPontuacao}`;
     }
 
-    if(!regexTerminaComTag.test(token)){
-      stringDepoisToken = `(?=${stringPontuacao}${stringTags}(?:$|\\s))`;
+    if(!tokenTerminaComTag.test(token)){
+      stringDepoisToken = `${stringPontuacao}(?=(?:$|\\s|${stringTags}))`;
     }
 
     let tokenFormatado = this.escapeRegExp(token)
