@@ -121,7 +121,7 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
 
     let arrayMatches = Array.from(matches);
 
-    if(!arrayMatches || arrayMatches.length === 0){
+    if(!arrayMatches || arrayMatches.length <= this.textoClicado.dados.indice){
       alert("Ocorrência não encontrada. Verifique se digitou o texto corretamente na busca.");
       return;
     }
@@ -170,8 +170,10 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
     }
 
     let tokenFormatado = this.escapeRegExp(token)
+                          .replace(new RegExp(/(\s*<[^<>]+>\s*)/g), (match,g1)=>match.replace(g1, '\\s*' + g1.trim() + '\\s*'))
                           .replace(new RegExp(/(?<!<[^<>]*)\s+|\s+(?![^<>]*>)/g), '\\s+');
 
+    //console.log(tokenFormatado);
     return stringAntesToken + tokenFormatado + stringDepoisToken;
   }
 
