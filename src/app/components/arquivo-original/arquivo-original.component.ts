@@ -13,6 +13,7 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
   @Input() formData;
   @Input() textoClicado;
   scrollTop;
+  scrollTopAux;
   selectionStart;
   selectionEnd;
   atualizarSelecao;
@@ -47,24 +48,23 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
         this.atualizarSelecao = false;
       } else {
         //console.log('mudando para:' + this.scrollTop)
-        this.textArea.nativeElement.scrollTop = this.scrollTop || 0;
+        this.atualizarScrollTopDoElemento(this.scrollTop || 0);
       }
     }
     
   }
 
-  onScroll(event){
-    this.scrollTop = event.target.scrollTop;
-    //console.log(`${this.scrollTop}  ${event.target.scrollTop}`)
-  }
-
   destacarTexto(){
-    //console.log("destacando")
-    this.textArea.nativeElement.blur();
     this.textArea.nativeElement.focus();
+    
     this.rolarParaAreaSelecionada();
+    
     this.textArea.nativeElement.focus();
+    //console.log(`${this.textArea.nativeElement.scrollTop} ${this.selectionStart} ${this.selectionEnd}`);
+    
     this.textArea.nativeElement.setSelectionRange(this.selectionStart, this.selectionEnd);
+    
+    this.atualizarScrollTopDoElemento(this.scrollTopAux);
   }
 
   lerTexto(){
@@ -99,8 +99,19 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
 
     //preencher com a substring, rolar até o final, depois voltar para o texto original
     this.textArea.nativeElement.value = fullText.substring(0, this.selectionEnd);
-    this.textArea.nativeElement.scrollTop = this.textArea.nativeElement.scrollHeight;
+
+    //console.log(this.textArea.nativeElement.scrollHeight);
+    
+    this.atualizarScrollTopDoElemento(this.textArea.nativeElement.scrollHeight);
+    
+    //necessário para contornar bug de ir para o fim do texto na primeira busca
+    this.scrollTopAux = this.textArea.nativeElement.scrollTop;
+    
     this.textArea.nativeElement.value = fullText;
+  }
+
+  atualizarScrollTopDoElemento(novoScrollTop: number) { 
+    this.textArea.nativeElement.scrollTop = novoScrollTop;
   }
 
   obterRangeASelecionar() {
@@ -110,10 +121,13 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
 
     let arrayMatches = Array.from(matches);
 
-    if(!arrayMatches){
+    if(!arrayMatches || arrayMatches.length === 0){
       alert("Ocorrência não encontrada. Verifique se digitou o texto corretamente na busca.");
       return;
     }
+
+    //console.log(this.textoClicado);
+    //console.log(arrayMatches);
 
     let ocorrenciaEncontrada = arrayMatches[this.textoClicado.dados.indice];
 
@@ -155,7 +169,8 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
       stringDepoisToken = `(?=${stringPontuacao}${stringTags}(?:$|\\s))`;
     }
 
-    let tokenFormatado = this.escapeRegExp(token);
+    let tokenFormatado = this.escapeRegExp(token)
+                          .replace(new RegExp(/(?<!<[^<>]*)\s+|\s+(?![^<>]*>)/g), '\\s+');
 
     return stringAntesToken + tokenFormatado + stringDepoisToken;
   }
