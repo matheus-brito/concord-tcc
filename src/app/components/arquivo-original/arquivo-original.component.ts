@@ -154,7 +154,7 @@ export class ArquivoOriginalComponent implements OnInit, AfterViewInit {
     let tokenComecaComTag = new RegExp(/^<.*>.*$/);
     let tokenTerminaComTag = new RegExp(/^.*<.*>$/);
 
-    let stringPontuacao = '[!\\.,;\\:\\?\'\"_\\-\\(\\)\\{\\}\\[\\]<>]*';
+    let stringPontuacao = '[!\\.,;\\:\\?\'\"_\\-\\(\\)\\{\\}\\[\\]]*';
     let stringTags = '(?:<[^<>]+>)';
     let stringAntesToken = '';
     let stringDepoisToken = '';

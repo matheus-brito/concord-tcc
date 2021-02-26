@@ -25,7 +25,7 @@ export class LinesDisplayComponent implements OnInit{
   stringLinhasEmBranco = '\u26F8\u26F8';
   stringIdentficadorTempoControle = '\u2711\u2711';
   stringIdentficadorTempo = '\u26F2\u26F2';
-  stringPontuacao = '[!\\.,;\\:\\?\'\"_\\-\\(\\)\\{\\}\\[\\]<>]*';
+  stringPontuacao = '[!\\.,;\\:\\?\'\"_\\-\\(\\)\\{\\}\\[\\]]*';
   defaultPageSize = 10;
   ocorrenciasEncontradas = true;
 
